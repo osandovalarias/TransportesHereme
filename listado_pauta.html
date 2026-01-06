@@ -1,0 +1,3261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resumen Pautas Preventivas 5000KM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #2c5282;
+      --color-secondary: #ebf8ff;
+      --color-accent: #2b6cb0;
+      --color-success: #38a169;
+      --color-error: #e53e3e;
+      --color-warning: #dd6b20;
+      --color-text: #2d3748;
+      --color-light: #f7fafc;
+      --border-radius: 10px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #3f72af, #dbe2ef);
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      padding: 20px;
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--color-primary);
+      border-radius: var(--border-radius);
+      color: white;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .filters-container {
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-end;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: var(--color-accent);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: white;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.2);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+    }
+
+    .btn-primary:hover {
+      background: #1a365d;
+    }
+
+    .btn-secondary {
+      background: #4a5568;
+    }
+
+    .btn-secondary:hover {
+      background: #2d3748;
+    }
+
+    .btn-success {
+      background: var(--color-success);
+    }
+
+    .btn-success:hover {
+      background: #2f855a;
+    }
+
+    .btn-info {
+      background: #3498db;
+    }
+
+    .btn-info:hover {
+      background: #2980b9;
+    }
+
+    .btn-warning {
+      background: var(--color-warning);
+    }
+
+    .btn-warning:hover {
+      background: #c05621;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 15px;
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      background: var(--color-secondary);
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--color-primary);
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--color-text);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      box-shadow: var(--box-shadow);
+      background: white;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background-color: var(--color-primary);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+
+    tr:hover {
+      background-color: #e9ecef;
+    }
+
+    .actions-cell {
+      white-space: nowrap;
+    }
+
+    .descripcion-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-completed {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .badge-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .page-btn {
+      padding: 8px 15px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .page-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .page-btn.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: 95%;
+      max-width: 1200px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalopen 0.4s;
+    }
+
+    @keyframes modalopen {
+      from {opacity: 0; transform: translateY(-60px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: var(--color-primary);
+    }
+
+    .status-message {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: var(--border-radius);
+      text-align: center;
+      font-weight: 500;
+      display: none;
+    }
+
+    .error {
+      background-color: #fff5f5;
+      color: var(--color-error);
+      border-left: 5px solid var(--color-error);
+    }
+
+    .success {
+      background-color: #f0fff4;
+      color: var(--color-success);
+      border-left: 5px solid var(--color-success);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+    }
+
+    .loading i {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #718096;
+      font-size: 1.1rem;
+    }
+
+    .export-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Estilos para el formulario de edición */
+    .checklist-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .checklist-table th, .checklist-table td {
+      padding: 14px 16px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .checklist-table th {
+      background-color: var(--color-primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .checklist-table tr:nth-child(even) {
+      background-color: #f7fafc;
+    }
+
+    .checklist-table tr:hover {
+      background-color: #ebf8ff;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-number {
+      background-color: var(--color-primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .item-description {
+      flex-grow: 1;
+    }
+
+    .circle-checkbox {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .circle-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid #cbd5e0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      background-color: white;
+      position: relative;
+    }
+
+    .circle:hover {
+      border-color: var(--color-primary);
+      transform: scale(1.1);
+    }
+
+    .circle.selected {
+      border-color: var(--color-primary);
+      background-color: var(--color-primary);
+    }
+
+    .circle.selected::after {
+      content: "✓";
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .circle-label {
+      font-size: 0.85rem;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .axle-row {
+      display: flex;
+      gap: 25px;
+      margin-top: 10px;
+      min-height: 220px;
+      margin-bottom: 30px;
+    }
+    
+    .obs-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .obs-container strong {
+      margin-bottom: 8px;
+      color: var(--color-primary);
+    }
+    
+    .obs-container textarea {
+      flex: 1;
+      border: 2px solid black;
+      resize: none;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+    
+    .visual-container {
+      flex: 2;
+      border: 1px solid #cbd5e0;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      background-color: #f9fafb;
+      border-radius: var(--border-radius);
+    }
+    
+    .visual-container strong {
+      display: block;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      color: var(--color-primary);
+    }
+
+    .wheels-wrapper {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 15px;
+    }
+    
+    .wheel-group {
+      text-align: center;
+    }
+    
+    .wheel-group > div {
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: var(--color-text);
+    }
+
+    .bolt {
+      fill: white;
+      stroke: black;
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: fill 0.2s;
+    }
+    
+    .bolt.marked {
+      fill: black;
+    }
+
+    .torque-ui {
+      display: flex;
+      flex-direction: column;
+      width: 70px;
+    }
+    
+    .torque-head {
+      background: black;
+      color: white;
+      font-weight: bold;
+      padding: 6px 3px;
+      font-size: 11px;
+      border-radius: 4px 4px 0 0;
+    }
+    
+    .torque-input {
+      border: 1px solid #cbd5e0;
+      background: #e5e7eb;
+      height: 40px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .section-header {
+      background: var(--color-primary);
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 25px;
+      text-transform: uppercase;
+      border-radius: var(--border-radius);
+    }
+
+    .logo-img {
+      max-height: 60px;
+      width: auto;
+    }
+
+    /* Modal de vista previa para impresión */
+    .print-preview-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.9);
+    }
+
+    .print-preview-content {
+      background-color: white;
+      margin: 1% auto;
+      padding: 0;
+      border: none;
+      width: 100%;
+      height: 98%;
+      max-width: 100%;
+      overflow: auto;
+    }
+
+    .print-preview-header {
+      background: var(--color-primary);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .print-preview-body {
+      padding: 20px;
+      background: #f8f9fa;
+      height: calc(100% - 70px);
+      overflow: auto;
+    }
+
+    /* Estilos para impresión */
+    @media print {
+      body {
+        background: white !important;
+        padding: 0 !important;
+        font-size: 8pt !important;
+        line-height: 1.1 !important;
+      }
+      
+      .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .header, .export-buttons, .filters-container, .stats-container,
+      .btn-group, .no-print, .modal, .close, .print-preview-modal,
+      .print-preview-header, .print-controls {
+        display: none !important;
+      }
+      
+      table {
+        page-break-inside: avoid;
+        font-size: 7pt !important;
+      }
+      
+      .checklist-table th, .checklist-table td {
+        padding: 3px 4px !important;
+        font-size: 7pt !important;
+      }
+      
+      .checklist-table td {
+        vertical-align: middle !important;
+      }
+      
+      .circle {
+        width: 16px !important;
+        height: 16px !important;
+        border-width: 1px !important;
+      }
+      
+      .circle-label {
+        font-size: 6pt !important;
+      }
+      
+      .axle-row {
+        min-height: 100px !important;
+        margin-bottom: 10px !important;
+      }
+      
+      .visual-container {
+        padding: 5px !important;
+      }
+      
+      .wheels-wrapper svg {
+        width: 60px !important;
+        height: 60px !important;
+      }
+      
+      .torque-ui {
+        width: 40px !important;
+      }
+      
+      .torque-input {
+        height: 20px !important;
+        font-size: 9px !important;
+      }
+      
+      textarea {
+        font-size: 7pt !important;
+        padding: 3px !important;
+        border: 1px solid #ccc !important;
+      }
+      
+      h3 {
+        font-size: 9pt !important;
+        margin: 6px 0 !important;
+      }
+      
+      .section-header {
+        padding: 4px !important;
+        margin-top: 10px !important;
+        font-size: 8pt !important;
+      }
+      
+      .header-table, .info-table {
+        font-size: 7pt !important;
+      }
+      
+      .header-table td, .info-table td {
+        padding: 3px !important;
+      }
+      
+      .item-number {
+        width: 16px !important;
+        height: 16px !important;
+        font-size: 8pt !important;
+      }
+      
+      /* Ajustar para que todo quepa en 2 páginas tamaño carta */
+      @page {
+        size: letter;
+        margin: 0.3cm;
+      }
+      
+      /* Control de saltos de página */
+      .page-break {
+        page-break-before: always;
+      }
+      
+      /* Evitar que se corten tablas importantes */
+      .checklist-table {
+        page-break-inside: avoid;
+      }
+      
+      /* Ajustar contenedores para impresión */
+      #edit-form-container, #print-preview-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+      
+      /* Reducir espacio entre secciones */
+      div {
+        margin-bottom: 5px !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .filters-container {
+        flex-direction: column;
+      }
+      
+      .filter-group {
+        min-width: 100%;
+      }
+      
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .axle-row {
+        flex-direction: column;
+      }
+      
+      .wheels-wrapper {
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      
+      .wheels-wrapper svg {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .torque-ui {
+        width: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>RESUMEN PAUTAS PREVENTIVAS 5000KM</h1>
+      <p>TRANSPORTES HEREME LTDA. PROYECTO RAJO INCA - CODELCO VP</p>
+      <div class="header-info">
+        <div>COD: RE-MAN-004</div>
+        <div>SISTEMA DE GESTIÓN DE MANTENIMIENTO</div>
+        <div>VERSIÓN: 02</div>
+      </div>
+    </div>
+
+    <div class="export-buttons">
+      <button class="btn btn-secondary" onclick="window.location.href='menu.html'">
+        <i class="fas fa-arrow-left"></i> Volver al Menú
+      </button>
+      <button class="btn btn-secondary" onclick="window.print()">
+        <i class="fas fa-print"></i> Imprimir
+      </button>
+      <button class="btn btn-primary" onclick="window.location.href='crear_pauta.html'">
+        <i class="fas fa-plus"></i> Nueva Pauta
+      </button>
+    </div>
+
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="filter-patente">Patente</label>
+        <select id="filter-patente">
+          <option value="">Todas las patentes</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-mecanico">Mecánico</label>
+        <select id="filter-mecanico">
+          <option value="">Todos los mecánicos</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-fecha-desde">Fecha Desde</label>
+        <input type="date" id="filter-fecha-desde">
+      </div>
+      <div class="filter-group">
+        <label for="filter-fecha-hasta">Fecha Hasta</label>
+        <input type="date" id="filter-fecha-hasta">
+      </div>
+      <div class="filter-group">
+        <button class="btn btn-primary" onclick="aplicarFiltros()" style="width: 100%;">
+          <i class="fas fa-filter"></i> Filtrar
+        </button>
+      </div>
+      <div class="filter-group">
+        <button class="btn btn-secondary" onclick="limpiarFiltros()" style="width: 100%;">
+          <i class="fas fa-broom"></i> Limpiar
+        </button>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-label">Total Pautas</div>
+        <div class="stat-value" id="total-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Último Mes</div>
+        <div class="stat-value" id="month-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Patentes Únicas</div>
+        <div class="stat-value" id="patentes-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Mecánicos Activos</div>
+        <div class="stat-value" id="mecanicos-count">0</div>
+      </div>
+    </div>
+
+    <div id="error-message" class="status-message error" style="display: none;"></div>
+    <div id="success-message" class="status-message success" style="display: none;"></div>
+
+    <div id="loading" class="loading" style="display: none;">
+      <i class="fas fa-spinner"></i>
+      <p>Cargando datos...</p>
+    </div>
+
+    <div id="no-data" class="no-data" style="display: none;">
+      <i class="fas fa-clipboard-list" style="font-size: 3rem; margin-bottom: 15px;"></i>
+      <p>No se encontraron pautas preventivas de 5000km</p>
+    </div>
+
+    <table id="pautas-table" style="display: none;">
+      <thead>
+        <tr>
+          <th>OT</th>
+          <th>Patente</th>
+          <th>Vehículo</th>
+          <th>Fecha</th>
+          <th>Mecánico</th>
+          <th>Kilometraje</th>
+          <!-- Eliminada columna Supervisor -->
+          <th>Torque Del</th>
+          <th>Torque Tra</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="pautas-body">
+        <!-- Datos se cargarán aquí -->
+      </tbody>
+    </table>
+
+    <div id="pagination" class="pagination" style="display: none;"></div>
+  </div>
+
+  <!-- Modal de edición -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <div id="edit-form-container">
+        <!-- El formulario de edición se cargará aquí -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de vista previa para impresión -->
+  <div id="printPreviewModal" class="print-preview-modal">
+    <div class="print-preview-content">
+      <div class="print-preview-header">
+        <h3 style="margin: 0; color: white;">Vista Previa de Impresión - Optimizado para 2 páginas</h3>
+        <div class="print-controls">
+          <button class="btn btn-primary" onclick="imprimirDesdeVistaPrevia()" style="margin-right: 10px;">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarVistaPrevia()">
+            <i class="fas fa-times"></i> Cerrar
+          </button>
+        </div>
+      </div>
+      <div class="print-preview-body" id="print-preview-body">
+        <!-- Contenido de la vista previa se cargará aquí -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuración de Supabase
+    const SUPABASE_URL = 'https://jrbluqwjmjsfoezzmjno.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Aw4gC43MsdZBMcTUnFT9Kg_hvfvDVHH';
+    
+    // Inicializar cliente Supabase
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Variables globales
+    let pautas = [];
+    let pautasFiltradas = [];
+    let patentesUnicas = [];
+    let mecanicosUnicos = [];
+    let currentPage = 1;
+    const itemsPerPage = 20;
+
+    // Datos completos de los items del checklist
+    const checklistItems = {
+      sistemaRodado: [
+        { id: 1, descripcion: "Inspección y limpieza de llantas" },
+        { id: 2, descripcion: "Inspección y limpieza de pernos" },
+        { id: 3, descripcion: "Inspección y limpieza de tuercas" },
+        { id: 4, descripcion: "Inspección rueda repuesto" },
+        { id: 5, descripcion: "Torque de ruedas (Sprinter 516 133lbs)" },
+        { id: 6, descripcion: "Check point" },
+        { id: 7, descripcion: "Chequeo milimétrico de rodadura neumáticos y deformación (3mm mín.de profundidad)" },
+        { id: 8, descripcion: "Comprobar y restablecer la presión de aire de los neumáticos 40 psi" },
+        { id: 9, descripcion: "Estado de las llantas (orificio central y orificio pernos)" },
+        { id: 10, descripcion: "Comprobar los neumáticos respecto a daños y agrietamientos." }
+      ],
+      sistemaFrenos: [
+        { id: 11, descripcion: "Inspección y limpieza de Caliper" },
+        { id: 12, descripcion: "Inspección y limpieza de Porta Caliper" },
+        { id: 13, descripcion: "Pasadores de Caliper de Frenos (Engrase)" },
+        { id: 14, descripcion: "Inspección y limpieza de Discos" },
+        { id: 15, descripcion: "Inspección y limpieza de Balatas" },
+        { id: 16, descripcion: "Inspección de Flexibles" },
+        { id: 17, descripcion: "Revisión freno de mano." },
+        { id: 18, descripcion: "Inspección visual de pastillas de frenos delanteros y traseros (Cambio hasta 80% de desgaste)" }
+      ],
+      transmision: [
+        { id: 19, descripcion: "Chequeo de holgura de crucetas, machón y rodamiento central cardán" }
+      ],
+      suspension: [
+        { id: 20, descripcion: "Chequeo de Suspensión (amortiguadores, cazoletas, bieletas)" },
+        { id: 21, descripcion: "Revisión Silentblock" }
+      ],
+      direccion: [
+        { id: 22, descripcion: "Revisión holgura de puntas, rótulas, axiales" }
+      ],
+      motor: [
+        { id: 23, descripcion: "Revisión del nivel de aceite del motor" },
+        { id: 24, descripcion: "Revisión de Aceite Hidráulico (ATF)" },
+        { id: 25, descripcion: "Revisión de Líquido Refrigerante" },
+        { id: 26, descripcion: "Revisión de Nivel de Líquido de freno" },
+        { id: 27, descripcion: "Revisión de correas de Accesorios" },
+        { id: 28, descripcion: "Revisión de mangueras." }
+      ],
+      otros: [
+        { id: 29, descripcion: "Aire acondicionado / Calefacción" },
+        { id: 30, descripcion: "Cinturones de seguridad" },
+        { id: 31, descripcion: "Chequeo de luces / foco faenero / pértiga" },
+        { id: 32, descripcion: "Revisión cámara de retroceso y sensores de proximidad" },
+        { id: 33, descripcion: "Revisión de batería (Terminales sueltos) y carga de alternador" },
+        { id: 34, descripcion: "Chequeo de niveles agua limpiaparabrisas." },
+        { id: 35, descripcion: "Chequeo de testigos (Uso de Escáner)." },
+        { id: 36, descripcion: "Lavado carrocería General (Bajo Chasis)" }
+      ]
+    };
+
+    // Mostrar mensaje de error
+    function mostrarError(mensaje) {
+      const errorElement = document.getElementById('error-message');
+      errorElement.textContent = mensaje;
+      errorElement.style.display = 'block';
+      
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+      }, 5000);
+    }
+
+    // Mostrar mensaje de éxito
+    function mostrarExito(mensaje) {
+      const successElement = document.getElementById('success-message');
+      successElement.textContent = mensaje;
+      successElement.style.display = 'block';
+      
+      setTimeout(() => {
+        successElement.style.display = 'none';
+      }, 3000);
+    }
+
+    // Formatear fecha
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      
+      return `${day}-${month}-${year}`;
+    }
+
+    // Cargar pautas preventivas de 5000km
+    async function cargarPautas() {
+      try {
+        mostrarLoading(true);
+        
+        const { data, error } = await supabaseClient
+          .from('mantenimientos')
+          .select('*')
+          .eq('tipo', 'pauta_5000')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        pautas = data || [];
+        pautasFiltradas = [...pautas];
+        
+        actualizarEstadisticas();
+        cargarFiltros();
+        mostrarPautas();
+        
+      } catch (error) {
+        console.error('Error al cargar pautas:', error);
+        mostrarError('Error al cargar las pautas preventivas: ' + error.message);
+        mostrarNoData();
+      } finally {
+        mostrarLoading(false);
+      }
+    }
+
+    // Mostrar/ocultar loading
+    function mostrarLoading(mostrar) {
+      document.getElementById('loading').style.display = mostrar ? 'block' : 'none';
+    }
+
+    // Mostrar mensaje sin datos
+    function mostrarNoData() {
+      document.getElementById('no-data').style.display = 'block';
+      document.getElementById('pautas-table').style.display = 'none';
+      document.getElementById('pagination').style.display = 'none';
+    }
+
+    // Actualizar estadísticas
+    function actualizarEstadisticas() {
+      const total = pautasFiltradas.length;
+      
+      // Contar pautas del último mes
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      const monthCount = pautasFiltradas.filter(p => {
+        const fechaPauta = new Date(p.created_at || p.fecha);
+        return fechaPauta >= lastMonth;
+      }).length;
+      
+      // Patentes únicas
+      const patentesSet = new Set(pautasFiltradas.map(p => p.patente).filter(Boolean));
+      const patentesCount = patentesSet.size;
+      
+      // Mecánicos únicos
+      const mecanicosSet = new Set(pautasFiltradas.map(p => p.hecho_por || p.responsable).filter(Boolean));
+      const mecanicosCount = mecanicosSet.size;
+      
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('month-count').textContent = monthCount;
+      document.getElementById('patentes-count').textContent = patentesCount;
+      document.getElementById('mecanicos-count').textContent = mecanicosCount;
+    }
+
+    // Cargar opciones de filtros
+    function cargarFiltros() {
+      // Patentes únicas
+      patentesUnicas = [...new Set(pautas.map(p => p.patente).filter(Boolean))].sort();
+      const selectPatente = document.getElementById('filter-patente');
+      patentesUnicas.forEach(patente => {
+        const option = document.createElement('option');
+        option.value = patente;
+        option.textContent = patente;
+        selectPatente.appendChild(option);
+      });
+      
+      // Mecánicos únicos
+      mecanicosUnicos = [...new Set(pautas.map(p => p.hecho_por || p.responsable).filter(Boolean))].sort();
+      const selectMecanico = document.getElementById('filter-mecanico');
+      mecanicosUnicos.forEach(mecanico => {
+        const option = document.createElement('option');
+        option.value = mecanico;
+        option.textContent = mecanico;
+        selectMecanico.appendChild(option);
+      });
+    }
+
+    // Aplicar filtros
+    function aplicarFiltros() {
+      const patente = document.getElementById('filter-patente').value;
+      const mecanico = document.getElementById('filter-mecanico').value;
+      const fechaDesde = document.getElementById('filter-fecha-desde').value;
+      const fechaHasta = document.getElementById('filter-fecha-hasta').value;
+      
+      pautasFiltradas = pautas.filter(p => {
+        // Filtro por patente
+        if (patente && p.patente !== patente) return false;
+        
+        // Filtro por mecánico
+        if (mecanico && (p.hecho_por !== mecanico && p.responsable !== mecanico)) return false;
+        
+        // Filtro por fecha
+        if (fechaDesde) {
+          const fechaPauta = new Date(p.created_at || p.fecha);
+          const fechaDesdeObj = new Date(fechaDesde);
+          if (fechaPauta < fechaDesdeObj) return false;
+        }
+        
+        if (fechaHasta) {
+          const fechaPauta = new Date(p.created_at || p.fecha);
+          const fechaHastaObj = new Date(fechaHasta);
+          fechaHastaObj.setHours(23, 59, 59, 999);
+          if (fechaPauta > fechaHastaObj) return false;
+        }
+        
+        return true;
+      });
+      
+      currentPage = 1;
+      mostrarPautas();
+      actualizarEstadisticas();
+    }
+
+    // Limpiar filtros
+    function limpiarFiltros() {
+      document.getElementById('filter-patente').value = '';
+      document.getElementById('filter-mecanico').value = '';
+      document.getElementById('filter-fecha-desde').value = '';
+      document.getElementById('filter-fecha-hasta').value = '';
+      
+      pautasFiltradas = [...pautas];
+      currentPage = 1;
+      mostrarPautas();
+      actualizarEstadisticas();
+    }
+
+    // Mostrar pautas en tabla
+    function mostrarPautas() {
+      const tbody = document.getElementById('pautas-body');
+      tbody.innerHTML = '';
+      
+      if (pautasFiltradas.length === 0) {
+        mostrarNoData();
+        return;
+      }
+      
+      document.getElementById('pautas-table').style.display = 'table';
+      document.getElementById('no-data').style.display = 'none';
+      
+      // Calcular índices para paginación
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pautasPagina = pautasFiltradas.slice(startIndex, endIndex);
+      
+      pautasPagina.forEach(pauta => {
+        const tr = document.createElement('tr');
+        
+        // Obtener valores con valores por defecto
+        const numeroOT = pauta.numero_ot || pauta.id || '';
+        const patente = pauta.patente || '';
+        const vehiculo = pauta.vehiculo || '';
+        const fecha = formatDate(pauta.created_at || pauta.fecha);
+        const mecanico = pauta.hecho_por || pauta.responsable || '';
+        const kilometraje = pauta.kilometraje ? pauta.kilometraje.toLocaleString() : '0';
+        // Eliminado supervisor de la visualización
+        const torqueDel = pauta.torque_del_izq ? `${pauta.torque_del_izq}/${pauta.torque_del_der}` : '-';
+        const torqueTra = pauta.torque_tra_izq ? `${pauta.torque_tra_izq}/${pauta.torque_tra_der}` : '-';
+        
+        tr.innerHTML = `
+          <td>${numeroOT}</td>
+          <td><strong>${patente}</strong></td>
+          <td>${vehiculo}</td>
+          <td>${fecha}</td>
+          <td>${mecanico}</td>
+          <td>${kilometraje} km</td>
+          <td>${torqueDel}</td>
+          <td>${torqueTra}</td>
+          <td class="actions-cell">
+            <button class="btn btn-info btn-sm" onclick="editarPauta(${pauta.id})">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      // Actualizar paginación
+      actualizarPaginacion();
+    }
+
+    // Actualizar paginación
+    function actualizarPaginacion() {
+      const totalPages = Math.ceil(pautasFiltradas.length / itemsPerPage);
+      const paginationDiv = document.getElementById('pagination');
+      
+      if (totalPages <= 1) {
+        paginationDiv.style.display = 'none';
+        return;
+      }
+      
+      paginationDiv.style.display = 'flex';
+      paginationDiv.innerHTML = '';
+      
+      // Botón anterior
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.onclick = () => cambiarPagina(currentPage - 1);
+      paginationDiv.appendChild(prevBtn);
+      
+      // Números de página
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          const pageBtn = document.createElement('button');
+          pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+          pageBtn.textContent = i;
+          pageBtn.onclick = () => cambiarPagina(i);
+          paginationDiv.appendChild(pageBtn);
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          const ellipsis = document.createElement('span');
+          ellipsis.textContent = '...';
+          ellipsis.style.padding = '8px';
+          paginationDiv.appendChild(ellipsis);
+        }
+      }
+      
+      // Botón siguiente
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.onclick = () => cambiarPagina(currentPage + 1);
+      paginationDiv.appendChild(nextBtn);
+    }
+
+    // Cambiar página
+    function cambiarPagina(pagina) {
+      currentPage = pagina;
+      mostrarPautas();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Función para crear una fila de checklist
+    function crearFilaChecklist(item, seccion, estado = null, observacion = '') {
+      const tr = document.createElement('tr');
+      tr.dataset.id = item.id;
+      tr.dataset.seccion = seccion;
+      
+      // Celda de descripción
+      const tdDesc = document.createElement('td');
+      const divCheckItem = document.createElement('div');
+      divCheckItem.className = 'check-item';
+      
+      const divNumero = document.createElement('div');
+      divNumero.className = 'item-number';
+      divNumero.textContent = item.id;
+      
+      const divDescripcion = document.createElement('div');
+      divDescripcion.className = 'item-description';
+      divDescripcion.textContent = item.descripcion;
+      
+      divCheckItem.appendChild(divNumero);
+      divCheckItem.appendChild(divDescripcion);
+      tdDesc.appendChild(divCheckItem);
+      
+      // Celda de estado
+      const tdEstado = document.createElement('td');
+      const divCircleCheckbox = document.createElement('div');
+      divCircleCheckbox.className = 'circle-checkbox';
+      
+      // Opción SI
+      const divSi = document.createElement('div');
+      divSi.className = 'circle-option';
+      const circleSi = document.createElement('div');
+      circleSi.className = 'circle';
+      circleSi.dataset.value = 'si';
+      circleSi.dataset.itemId = item.id;
+      circleSi.dataset.seccion = seccion;
+      circleSi.onclick = () => toggleCircle(circleSi, 'si');
+      if (estado === 'si') circleSi.classList.add('selected');
+      const labelSi = document.createElement('div');
+      labelSi.className = 'circle-label';
+      labelSi.textContent = 'SI';
+      divSi.appendChild(circleSi);
+      divSi.appendChild(labelSi);
+      
+      // Opción NO
+      const divNo = document.createElement('div');
+      divNo.className = 'circle-option';
+      const circleNo = document.createElement('div');
+      circleNo.className = 'circle';
+      circleNo.dataset.value = 'no';
+      circleNo.dataset.itemId = item.id;
+      circleNo.dataset.seccion = seccion;
+      circleNo.onclick = () => toggleCircle(circleNo, 'no');
+      if (estado === 'no') circleNo.classList.add('selected');
+      const labelNo = document.createElement('div');
+      labelNo.className = 'circle-label';
+      labelNo.textContent = 'NO';
+      divNo.appendChild(circleNo);
+      divNo.appendChild(labelNo);
+      
+      divCircleCheckbox.appendChild(divSi);
+      divCircleCheckbox.appendChild(divNo);
+      tdEstado.appendChild(divCircleCheckbox);
+      
+      // Celda de observaciones
+      const tdObs = document.createElement('td');
+      const textareaObs = document.createElement('textarea');
+      textareaObs.className = 'item-observacion';
+      textareaObs.dataset.itemId = item.id;
+      textareaObs.dataset.seccion = seccion;
+      textareaObs.placeholder = 'Observaciones...';
+      textareaObs.rows = 2;
+      textareaObs.style.width = '100%';
+      textareaObs.value = observacion;
+      tdObs.appendChild(textareaObs);
+      
+      tr.appendChild(tdDesc);
+      tr.appendChild(tdEstado);
+      tr.appendChild(tdObs);
+      
+      return tr;
+    }
+
+    // Función para alternar casillas circulares
+    function toggleCircle(circleElement, valor) {
+      const itemId = circleElement.dataset.itemId;
+      const seccion = circleElement.dataset.seccion;
+      
+      const todasCasillas = document.querySelectorAll(`.circle[data-item-id="${itemId}"]`);
+      
+      todasCasillas.forEach(circle => {
+        circle.classList.remove('selected');
+      });
+      
+      circleElement.classList.add('selected');
+    }
+
+    // Función para alternar estado de pernos
+    function toggleBolt(boltElement) {
+      const position = parseInt(boltElement.dataset.position);
+      const wheel = boltElement.dataset.wheel;
+      
+      if (boltElement.classList.contains('marked')) {
+        boltElement.classList.remove('marked');
+      } else {
+        boltElement.classList.add('marked');
+      }
+    }
+
+    // Editar pauta
+    async function editarPauta(id) {
+      try {
+        // Obtener datos completos de la pauta
+        const { data, error } = await supabaseClient
+          .from('mantenimientos')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (error) throw error;
+        
+        // Cargar el formulario de edición
+        await cargarFormularioEdicion(data);
+        
+        // Mostrar modal
+        document.getElementById('editModal').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error al cargar pauta para edición:', error);
+        mostrarError('Error al cargar la pauta para edición: ' + error.message);
+      }
+    }
+
+    // Cargar formulario de edición
+    async function cargarFormularioEdicion(pauta) {
+      // Primero cargar datos necesarios
+      await cargarDatosParaFormulario();
+      
+      // Obtener datos del checklist
+      const checklistData = pauta.checklist_data || {};
+      const boltsData = pauta.verificacion_tornillos || pauta.insumos || {};
+      
+      // Crear el contenido del formulario
+      const formContainer = document.getElementById('edit-form-container');
+      formContainer.innerHTML = `
+        <h2 style="color: var(--color-primary); margin-bottom: 20px; text-align: center;">
+          <i class="fas fa-edit"></i> Editar Pauta Preventiva 5000KM
+        </h2>
+        
+        <input type="hidden" id="edit-id" value="${pauta.id}">
+        
+        <table class="header-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid black;">
+          <tr>
+            <td rowspan="2" style="width:25%; text-align: center; vertical-align: middle;">
+              <img src="img/logo.png" alt="Logo HEREME" class="logo-img" onerror="this.style.display='none'; this.parentNode.innerHTML='LOGO HEREME';">
+            </td>
+            <td colspan="2" style="text-align: center;">
+              <strong>TRANSPORTES HEREME LTDA. CONTRATO SIGMA CODELCO ANDINA</strong>
+            </td>
+            <td style="width:20%"><strong>COD: RE-MAN-004</strong></td>
+          </tr>
+          <tr>
+            <td><strong>FECHA:</strong> <span id="edit-fecha-header">${formatDate(pauta.created_at || pauta.fecha)}</span></td>
+            <td><strong>VERSIÓN:</strong> 02</td>
+            <td><strong><span id="edit-ot-number">OT ${(pauta.numero_ot || pauta.id).toString().padStart(4, '0')}</span></strong></td>
+          </tr>
+        </table>
+
+        <table class="info-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">NOMBRE MECÁNICO:</td>
+            <td style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <select id="edit-responsable" style="width: 100%;" onchange="actualizarFirmaMecanicoEdit()">
+                <option value="">Seleccione un mecánico</option>
+              </select>
+            </td>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">FECHA:</td>
+            <td style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <input type="date" id="edit-fecha" style="width: 100%;" value="${pauta.fecha ? new Date(pauta.fecha).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}">
+            </td>
+          </tr>
+          <tr>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">PATENTE:</td>
+            <td style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <select id="edit-patente" style="width: 100%;" onchange="cargarVehiculoEdit()">
+                <option value="">Seleccione una patente</option>
+              </select>
+            </td>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">VEHÍCULO:</td>
+            <td style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <input type="text" id="edit-vehiculo" style="width: 100%;" value="${pauta.vehiculo || ''}">
+            </td>
+          </tr>
+          <tr>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">KILOMETRAJE:</td>
+            <td style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <input type="number" id="edit-kilometraje" style="width: 100%;" min="0" step="1" value="${pauta.kilometraje || ''}">
+            </td>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">EMPRESA:</td>
+            <td style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <input type="text" id="edit-empresa_asociada" style="width: 100%;" value="${pauta.empresa_asociada || 'SIGMA'}">
+            </td>
+          </tr>
+          <tr>
+            <td class="label" style="font-weight: bold; background: #e5e7eb; width: 160px; padding: 10px; border: 1px solid #d1d5db;">PRÓXIMA MANTENCIÓN:</td>
+            <td colspan="3" style="padding: 10px; border: 1px solid #d1d5db; background-color: #f8f9fa;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="number" id="edit-proxima_mantencion_km" style="flex: 1;" min="0" step="1" value="${pauta.proxima_mantencion_km || (pauta.kilometraje ? parseInt(pauta.kilometraje) + 5000 : '')}">
+                <span style="font-weight: bold; white-space: nowrap;">KM</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-tire"></i> SISTEMA DE RODADO
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-sistema-rodado">
+              <!-- Items del checklist de rodado -->
+            </tbody>
+          </table>
+
+          <div class="torque-visual-container">
+            <div class="section-header">Verificación Visual de Tornillos - Torque de Ruedas</div>
+            
+            <div class="axle-row">
+              <div class="obs-container">
+                <strong>Observaciones:</strong>
+                <textarea id="edit-obs-delantero" placeholder="Notas sobre el eje delantero...">${pauta.obs_delantero || ''}</textarea>
+              </div>
+              <div class="visual-container">
+                <strong>Eje Delantero</strong>
+                <div class="wheels-wrapper">
+                  <div class="torque-ui">
+                    <div class="torque-head">Torque Nm</div>
+                    <input class="torque-input" id="edit-torque-del-izq-input" value="${pauta.torque_del_izq || ''}">
+                  </div>
+                  <div class="wheel-group">
+                    <div>Izquierda</div>
+                    <svg viewBox="0 0 100 100" width="110" id="edit-wheel-del-izq">
+                      <circle cx="50" cy="50" r="18" fill="black" />
+                      <circle class="bolt" cx="50" cy="12" r="6" data-position="1" data-wheel="del-izq" />
+                      <circle class="bolt" cx="72" cy="19" r="6" data-position="2" data-wheel="del-izq" />
+                      <circle class="bolt" cx="86" cy="38" r="6" data-position="3" data-wheel="del-izq" />
+                      <circle class="bolt" cx="86" cy="62" r="6" data-position="4" data-wheel="del-izq" />
+                      <circle class="bolt" cx="72" cy="81" r="6" data-position="5" data-wheel="del-izq" />
+                      <circle class="bolt" cx="50" cy="88" r="6" data-position="6" data-wheel="del-izq" />
+                      <circle class="bolt" cx="28" cy="81" r="6" data-position="7" data-wheel="del-izq" />
+                      <circle class="bolt" cx="14" cy="62" r="6" data-position="8" data-wheel="del-izq" />
+                      <circle class="bolt" cx="14" cy="38" r="6" data-position="9" data-wheel="del-izq" />
+                      <circle class="bolt" cx="28" cy="19" r="6" data-position="10" data-wheel="del-izq" />
+                    </svg>
+                  </div>
+                  <div class="wheel-group">
+                    <div>Derecha</div>
+                    <svg viewBox="0 0 100 100" width="110" id="edit-wheel-del-der">
+                      <circle cx="50" cy="50" r="18" fill="black" />
+                      <circle class="bolt" cx="50" cy="12" r="6" data-position="1" data-wheel="del-der" />
+                      <circle class="bolt" cx="72" cy="19" r="6" data-position="2" data-wheel="del-der" />
+                      <circle class="bolt" cx="86" cy="38" r="6" data-position="3" data-wheel="del-der" />
+                      <circle class="bolt" cx="86" cy="62" r="6" data-position="4" data-wheel="del-der" />
+                      <circle class="bolt" cx="72" cy="81" r="6" data-position="5" data-wheel="del-der" />
+                      <circle class="bolt" cx="50" cy="88" r="6" data-position="6" data-wheel="del-der" />
+                      <circle class="bolt" cx="28" cy="81" r="6" data-position="7" data-wheel="del-der" />
+                      <circle class="bolt" cx="14" cy="62" r="6" data-position="8" data-wheel="del-der" />
+                      <circle class="bolt" cx="14" cy="38" r="6" data-position="9" data-wheel="del-der" />
+                      <circle class="bolt" cx="28" cy="19" r="6" data-position="10" data-wheel="del-der" />
+                    </svg>
+                  </div>
+                  <div class="torque-ui">
+                    <div class="torque-head">Torque Nm</div>
+                    <input class="torque-input" id="edit-torque-del-der-input" value="${pauta.torque_del_der || ''}">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="axle-row">
+              <div class="obs-container">
+                <strong>Observaciones:</strong>
+                <textarea id="edit-obs-trasero" placeholder="Notas sobre el eje trasero...">${pauta.obs_trasero || ''}</textarea>
+              </div>
+              <div class="visual-container">
+                <strong>Eje Trasero</strong>
+                <div class="wheels-wrapper">
+                  <div class="torque-ui">
+                    <div class="torque-head">Torque Nm</div>
+                    <input class="torque-input" id="edit-torque-tra-izq-input" value="${pauta.torque_tra_izq || ''}">
+                  </div>
+                  <div class="wheel-group">
+                    <div>Izquierda</div>
+                    <svg viewBox="0 0 100 100" width="110" id="edit-wheel-tra-izq">
+                      <circle cx="50" cy="50" r="18" fill="black" />
+                      <circle class="bolt" cx="50" cy="12" r="6" data-position="1" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="72" cy="19" r="6" data-position="2" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="86" cy="38" r="6" data-position="3" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="86" cy="62" r="6" data-position="4" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="72" cy="81" r="6" data-position="5" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="50" cy="88" r="6" data-position="6" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="28" cy="81" r="6" data-position="7" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="14" cy="62" r="6" data-position="8" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="14" cy="38" r="6" data-position="9" data-wheel="tra-izq" />
+                      <circle class="bolt" cx="28" cy="19" r="6" data-position="10" data-wheel="tra-izq" />
+                    </svg>
+                  </div>
+                  <div class="wheel-group">
+                    <div>Derecha</div>
+                    <svg viewBox="0 0 100 100" width="110" id="edit-wheel-tra-der">
+                      <circle cx="50" cy="50" r="18" fill="black" />
+                      <circle class="bolt" cx="50" cy="12" r="6" data-position="1" data-wheel="tra-der" />
+                      <circle class="bolt" cx="72" cy="19" r="6" data-position="2" data-wheel="tra-der" />
+                      <circle class="bolt" cx="86" cy="38" r="6" data-position="3" data-wheel="tra-der" />
+                      <circle class="bolt" cx="86" cy="62" r="6" data-position="4" data-wheel="tra-der" />
+                      <circle class="bolt" cx="72" cy="81" r="6" data-position="5" data-wheel="tra-der" />
+                      <circle class="bolt" cx="50" cy="88" r="6" data-position="6" data-wheel="tra-der" />
+                      <circle class="bolt" cx="28" cy="81" r="6" data-position="7" data-wheel="tra-der" />
+                      <circle class="bolt" cx="14" cy="62" r="6" data-position="8" data-wheel="tra-der" />
+                      <circle class="bolt" cx="14" cy="38" r="6" data-position="9" data-wheel="tra-der" />
+                      <circle class="bolt" cx="28" cy="19" r="6" data-position="10" data-wheel="tra-der" />
+                    </svg>
+                  </div>
+                  <div class="torque-ui">
+                    <div class="torque-head">Torque Nm</div>
+                    <input class="torque-input" id="edit-torque-tra-der-input" value="${pauta.torque_tra_der || ''}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 30px;">
+            <label for="edit-observaciones_rodado">
+              <i class="fas fa-clipboard-list"></i> OBSERVACIONES GENERALES DEL SISTEMA DE RODADO:
+            </label>
+            <textarea id="edit-observaciones_rodado" rows="4" placeholder="Observaciones generales sobre el sistema de rodado...">${pauta.observaciones_rodado || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-stop-circle"></i> SISTEMA DE FRENOS
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-sistema-frenos">
+              <!-- Items del checklist de frenos -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_frenos">OBSERVACIONES GENERALES DEL SISTEMA DE FRENOS:</label>
+            <textarea id="edit-observaciones_frenos" rows="3" placeholder="Observaciones generales...">${pauta.observaciones_frenos || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-cogs"></i> COMPONENTES DE TRANSMISIÓN
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-transmision">
+              <!-- Items del checklist de transmisión -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_transmision">OBSERVACIONES GENERALES DE TRANSMISIÓN:</label>
+            <textarea id="edit-observaciones_transmision" rows="2" placeholder="Observaciones generales...">${pauta.observaciones_transmision || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-car-side"></i> COMPONENTES DE SUSPENSIÓN
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-suspension">
+              <!-- Items del checklist de suspensión -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_suspension">OBSERVACIONES GENERALES DE SUSPENSIÓN:</label>
+            <textarea id="edit-observaciones_suspension" rows="2" placeholder="Observaciones generales...">${pauta.observaciones_suspension || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-steering-wheel"></i> COMPONENTES DE DIRECCIÓN
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-direccion">
+              <!-- Items del checklist de dirección -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_direccion">OBSERVACIONES GENERALES DE DIRECCIÓN:</label>
+            <textarea id="edit-observaciones_direccion" rows="2" placeholder="Observaciones generales...">${pauta.observaciones_direccion || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-engine"></i> MOTOR
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-motor">
+              <!-- Items del checklist de motor -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_motor">OBSERVACIONES GENERALES DEL MOTOR:</label>
+            <textarea id="edit-observaciones_motor" rows="3" placeholder="Observaciones generales...">${pauta.observaciones_motor || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-check-double"></i> OTROS PUNTOS A CHEQUEAR
+          </h3>
+          
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="60%">ITEM</th>
+                <th width="15%">ESTADO</th>
+                <th width="25%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody id="edit-otros">
+              <!-- Items del checklist otros -->
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_otros">OBSERVACIONES GENERALES:</label>
+            <textarea id="edit-observaciones_otros" rows="3" placeholder="Observaciones generales...">${pauta.observaciones_otros || ''}</textarea>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <h3 style="color: var(--color-primary);">
+            <i class="fas fa-signature"></i> OBSERVACIONES Y FIRMAS
+          </h3>
+          
+          <div style="margin-top: 20px;">
+            <label for="edit-observaciones_finales">OBSERVACIONES DEL MANTENEDOR:</label>
+            <textarea id="edit-observaciones_finales" rows="4" placeholder="Observaciones finales del mantenedor...">${pauta.observaciones_finales || ''}</textarea>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px;">
+            <div>
+              <label for="edit-firma_mecanico">NOMBRE MECÁNICO:</label>
+              <input type="text" id="edit-firma_mecanico" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: var(--border-radius);" value="${pauta.firma_mecanico || pauta.hecho_por || ''}">
+              <div style="height: 2px; background: #2d3748; margin-top: 30px;"></div>
+              <div style="text-align: center; margin-top: 5px; color: #718096;">FIRMA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top: 30px; justify-content: center;">
+          <button class="btn btn-success" onclick="guardarEdicionCompleta()">
+            <i class="fas fa-save"></i> GUARDAR CAMBIOS
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModal()">
+            <i class="fas fa-times"></i> CANCELAR
+          </button>
+          <button class="btn btn-primary" onclick="mostrarVistaPreviaImpresion()">
+            <i class="fas fa-print"></i> VISTA PREVIA
+          </button>
+        </div>
+      `;
+      
+      // Poblar selects
+      poblarSelectsEdit();
+      
+      // Poblar checklists
+      poblarChecklistsEdit(checklistData);
+      
+      // Poblar pernos
+      poblarPernosEdit(boltsData);
+      
+      // Configurar eventos para los pernos
+      document.querySelectorAll('#editModal .bolt').forEach(bolt => {
+        bolt.addEventListener('click', function() {
+          toggleBolt(this);
+        });
+      });
+      
+      // Actualizar fecha en el encabezado
+      document.getElementById('edit-fecha').addEventListener('change', function() {
+        const fechaValue = this.value;
+        if (fechaValue) {
+          const [year, month, day] = fechaValue.split('-');
+          document.getElementById('edit-fecha-header').textContent = `${day}-${month}-${year}`;
+        }
+      });
+      
+      // Establecer valores en los selects
+      establecerValoresEdit(pauta);
+      
+      // Configurar cálculo automático de próxima mantención KM
+      configurarCalculoProximaMantencionKM();
+    }
+
+    // Función para actualizar la firma del mecánico cuando se cambia el nombre
+    function actualizarFirmaMecanicoEdit() {
+      const responsableSelect = document.getElementById('edit-responsable');
+      const firmaMecanicoInput = document.getElementById('edit-firma_mecanico');
+      
+      if (responsableSelect && firmaMecanicoInput) {
+        const selectedValue = responsableSelect.value;
+        if (selectedValue) {
+          firmaMecanicoInput.value = selectedValue;
+        }
+      }
+    }
+
+    // Configurar cálculo de próxima mantención KM en edición
+    function configurarCalculoProximaMantencionKM() {
+      const kilometrajeInput = document.getElementById('edit-kilometraje');
+      const proximaMantencionInput = document.getElementById('edit-proxima_mantencion_km');
+      
+      if (kilometrajeInput && proximaMantencionInput) {
+        // Calcular automáticamente cuando cambia el kilometraje
+        kilometrajeInput.addEventListener('input', function() {
+          const kilometrajeActual = parseInt(this.value) || 0;
+          if (kilometrajeActual > 0) {
+            const proximaKM = kilometrajeActual + 5000;
+            proximaMantencionInput.value = proximaKM;
+          }
+        });
+      }
+    }
+
+    // Cargar datos para formulario
+    async function cargarDatosParaFormulario() {
+      try {
+        // Cargar mecánicos de la tabla mecanicos
+        const { data: mecanicosData, error: errorMecanicos } = await supabaseClient
+          .from('mecanicos')
+          .select('id, nombre')
+          .order('nombre');
+        
+        let mecanicosList = mecanicosData || [];
+        
+        // Cargar gerentes de operaciones
+        const { data: gerentesData, error: errorGerentes } = await supabaseClient
+          .from('gerentes_operaciones')
+          .select('id, nombre')
+          .order('nombre');
+        
+        if (gerentesData) {
+          mecanicosList = [...mecanicosList, ...gerentesData];
+        }
+        
+        // Cargar jefes de mantenimiento
+        const { data: jefesData, error: errorJefes } = await supabaseClient
+          .from('jefes_mantenimiento')
+          .select('id, nombre')
+          .order('nombre');
+        
+        if (jefesData) {
+          mecanicosList = [...mecanicosList, ...jefesData];
+        }
+        
+        // Eliminar duplicados por nombre
+        const uniqueMecanicos = [];
+        const nombresSet = new Set();
+        
+        mecanicosList.forEach(mecanico => {
+          if (mecanico.nombre && !nombresSet.has(mecanico.nombre)) {
+            nombresSet.add(mecanico.nombre);
+            uniqueMecanicos.push(mecanico);
+          }
+        });
+        
+        // Ordenar alfabéticamente
+        uniqueMecanicos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        
+        window.mecanicosEdit = uniqueMecanicos;
+        
+        // Cargar máquinas
+        const { data: maquinasData, error: errorMaquinas } = await supabaseClient
+          .from('maquinas')
+          .select('id, patente, modelo')
+          .order('patente');
+        
+        window.maquinasEdit = maquinasData || [];
+        
+      } catch (error) {
+        console.error('Error al cargar datos para formulario:', error);
+        mostrarError('Error al cargar datos necesarios');
+      }
+    }
+
+    // Poblar selects del formulario de edición
+    function poblarSelectsEdit() {
+      // Mecánicos (incluyendo gerentes y jefes)
+      const selectMecanico = document.getElementById('edit-responsable');
+      selectMecanico.innerHTML = '<option value="">Seleccione un mecánico</option>';
+      if (window.mecanicosEdit && window.mecanicosEdit.length > 0) {
+        window.mecanicosEdit.forEach(mecanico => {
+          const option = document.createElement('option');
+          option.value = mecanico.nombre;
+          option.textContent = mecanico.nombre;
+          selectMecanico.appendChild(option);
+        });
+      }
+      
+      // Patentes
+      const selectPatente = document.getElementById('edit-patente');
+      selectPatente.innerHTML = '<option value="">Seleccione una patente</option>';
+      if (window.maquinasEdit && window.maquinasEdit.length > 0) {
+        window.maquinasEdit.forEach(maquina => {
+          const option = document.createElement('option');
+          option.value = maquina.patente;
+          option.textContent = maquina.patente;
+          option.dataset.modelo = maquina.modelo || '';
+          selectPatente.appendChild(option);
+        });
+      }
+    }
+
+    // Establecer valores en los selects del formulario de edición
+    function establecerValoresEdit(pauta) {
+      // Establecer valor del mecánico
+      const selectMecanico = document.getElementById('edit-responsable');
+      const mecanicoValue = pauta.hecho_por || pauta.responsable || pauta.responsable || '';
+      if (mecanicoValue && selectMecanico) {
+        for (let i = 0; i < selectMecanico.options.length; i++) {
+          if (selectMecanico.options[i].value === mecanicoValue) {
+            selectMecanico.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      
+      // Establecer valor de la patente
+      const selectPatente = document.getElementById('edit-patente');
+      const patenteValue = pauta.patente || '';
+      if (patenteValue && selectPatente) {
+        for (let i = 0; i < selectPatente.options.length; i++) {
+          if (selectPatente.options[i].value === patenteValue) {
+            selectPatente.selectedIndex = i;
+            // Cargar el vehículo correspondiente
+            const vehiculoInput = document.getElementById('edit-vehiculo');
+            if (selectPatente.options[i].dataset.modelo) {
+              vehiculoInput.value = selectPatente.options[i].dataset.modelo;
+            } else if (pauta.vehiculo) {
+              vehiculoInput.value = pauta.vehiculo;
+            }
+            break;
+          }
+        }
+      }
+      
+      // Establecer firma del mecánico
+      const firmaMecanico = document.getElementById('edit-firma_mecanico');
+      if (firmaMecanico && !firmaMecanico.value && mecanicoValue) {
+        firmaMecanico.value = mecanicoValue;
+      }
+      
+      // Establecer próxima mantención KM
+      const proximaMantencionInput = document.getElementById('edit-proxima_mantencion_km');
+      if (!proximaMantencionInput.value && pauta.kilometraje) {
+        proximaMantencionInput.value = parseInt(pauta.kilometraje) + 5000;
+      }
+    }
+
+    // Cargar vehículo al seleccionar patente
+    function cargarVehiculoEdit() {
+      const patenteSelect = document.getElementById('edit-patente');
+      const selectedOption = patenteSelect.options[patenteSelect.selectedIndex];
+      const vehiculoInput = document.getElementById('edit-vehiculo');
+      
+      if (selectedOption && selectedOption.dataset.modelo) {
+        vehiculoInput.value = selectedOption.dataset.modelo;
+      }
+    }
+
+    // Poblar checklists desde datos guardados
+    function poblarChecklistsEdit(checklistData) {
+      // Sistema de rodado
+      const cuerpoRodado = document.getElementById('edit-sistema-rodado');
+      cuerpoRodado.innerHTML = '';
+      checklistItems.sistemaRodado.forEach(item => {
+        const itemData = checklistData.sistemaRodado?.[item.id] || {};
+        cuerpoRodado.appendChild(crearFilaChecklist(item, 'sistemaRodado', itemData.estado, itemData.observacion || ''));
+      });
+      
+      // Sistema de frenos
+      const cuerpoFrenos = document.getElementById('edit-sistema-frenos');
+      cuerpoFrenos.innerHTML = '';
+      checklistItems.sistemaFrenos.forEach(item => {
+        const itemData = checklistData.sistemaFrenos?.[item.id] || {};
+        cuerpoFrenos.appendChild(crearFilaChecklist(item, 'sistemaFrenos', itemData.estado, itemData.observacion || ''));
+      });
+      
+      // Transmisión
+      const cuerpoTransmision = document.getElementById('edit-transmision');
+      cuerpoTransmision.innerHTML = '';
+      checklistItems.transmision.forEach(item => {
+        const itemData = checklistData.transmision?.[item.id] || {};
+        cuerpoTransmision.appendChild(crearFilaChecklist(item, 'transmision', itemData.estado, itemData.observacion || ''));
+      });
+      
+      // Suspensión
+      const cuerposuspension = document.getElementById('edit-suspension');
+      cuerposuspension.innerHTML = '';
+      checklistItems.suspension.forEach(item => {
+        const itemData = checklistData.suspension?.[item.id] || {};
+        cuerposuspension.appendChild(crearFilaChecklist(item, 'suspension', itemData.estado, itemData.observacion || ''));
+      });
+      
+      // Dirección
+      const cuerpoDireccion = document.getElementById('edit-direccion');
+      cuerpoDireccion.innerHTML = '';
+      checklistItems.direccion.forEach(item => {
+        const itemData = checklistData.direccion?.[item.id] || {};
+        cuerpoDireccion.appendChild(crearFilaChecklist(item, 'direccion', itemData.estado, itemData.observacion || ''));
+      });
+      
+      // Motor
+      const cuerpoMotor = document.getElementById('edit-motor');
+      cuerpoMotor.innerHTML = '';
+      checklistItems.motor.forEach(item => {
+        const itemData = checklistData.motor?.[item.id] || {};
+        cuerpoMotor.appendChild(crearFilaChecklist(item, 'motor', itemData.estado, itemData.observacion || ''));
+      });
+      
+      // Otros
+      const cuerpoOtros = document.getElementById('edit-otros');
+      cuerpoOtros.innerHTML = '';
+      checklistItems.otros.forEach(item => {
+        const itemData = checklistData.otros?.[item.id] || {};
+        cuerpoOtros.appendChild(crearFilaChecklist(item, 'otros', itemData.estado, itemData.observacion || ''));
+      });
+    }
+
+    // Poblar pernos desde datos guardados
+    function poblarPernosEdit(boltsData) {
+      const wheels = ['del-izq', 'del-der', 'tra-izq', 'tra-der'];
+      
+      wheels.forEach(wheel => {
+        const wheelData = boltsData[wheel] || {};
+        
+        for (let position = 1; position <= 10; position++) {
+          const boltElement = document.querySelector(`#edit-wheel-${wheel} .bolt[data-position="${position}"]`);
+          if (boltElement && wheelData[position]) {
+            boltElement.classList.add('marked');
+          }
+        }
+      });
+    }
+
+    // Función para recolectar datos del checklist
+    function recolectarDatosChecklistEdit() {
+      const datos = {};
+      
+      for (const seccion in checklistItems) {
+        if (checklistItems.hasOwnProperty(seccion)) {
+          datos[seccion] = {};
+          
+          checklistItems[seccion].forEach(item => {
+            const circleSelected = document.querySelector(`#editModal .circle[data-item-id="${item.id}"].selected`);
+            const estado = circleSelected ? circleSelected.dataset.value : null;
+            
+            const textareaObs = document.querySelector(`#editModal textarea[data-item-id="${item.id}"]`);
+            const observacion = textareaObs ? textareaObs.value : '';
+            
+            datos[seccion][item.id] = {
+              id: item.id,
+              descripcion: item.descripcion,
+              estado: estado,
+              observacion: observacion
+            };
+          });
+        }
+      }
+      
+      return datos;
+    }
+
+    // Función para recolectar estado de pernos
+    function recolectarEstadoPernosEdit() {
+      const boltsState = {
+        'del-izq': {},
+        'del-der': {},
+        'tra-izq': {},
+        'tra-der': {}
+      };
+      
+      const wheels = ['del-izq', 'del-der', 'tra-izq', 'tra-der'];
+      
+      wheels.forEach(wheel => {
+        for (let position = 1; position <= 10; position++) {
+          const boltElement = document.querySelector(`#edit-wheel-${wheel} .bolt[data-position="${position}"]`);
+          boltsState[wheel][position] = boltElement ? boltElement.classList.contains('marked') : false;
+        }
+      });
+      
+      return boltsState;
+    }
+
+    // Función para formatear hora en formato 24h
+    function formatearHora24h() {
+      const now = new Date();
+      const horas = String(now.getHours()).padStart(2, '0');
+      const minutos = String(now.getMinutes()).padStart(2, '0');
+      return `${horas}:${minutos}`;
+    }
+
+    // Guardar edición completa
+    async function guardarEdicionCompleta() {
+      try {
+        const id = document.getElementById('edit-id').value;
+        
+        // Validar campos obligatorios
+        const camposObligatorios = [
+          { id: 'edit-responsable', nombre: 'Nombre de Mecánico' },
+          { id: 'edit-patente', nombre: 'Patente' },
+          { id: 'edit-fecha', nombre: 'Fecha' },
+          { id: 'edit-kilometraje', nombre: 'Kilometraje' }
+        ];
+        
+        for (const campo of camposObligatorios) {
+          const elemento = document.getElementById(campo.id);
+          const valor = elemento.value ? elemento.value.trim() : '';
+          if (!valor) {
+            mostrarError(`El campo "${campo.nombre}" es obligatorio`);
+            elemento.focus();
+            return;
+          }
+        }
+        
+        // Recolectar datos del checklist
+        const datosChecklist = recolectarDatosChecklistEdit();
+        const boltsState = recolectarEstadoPernosEdit();
+        const hora24h = formatearHora24h();
+        
+        // Recolectar datos del formulario
+        const datosActualizados = {
+          responsable: document.getElementById('edit-responsable').value,
+          fecha: document.getElementById('edit-fecha').value,
+          hora: hora24h,
+          patente: document.getElementById('edit-patente').value,
+          vehiculo: document.getElementById('edit-vehiculo').value,
+          kilometraje: parseInt(document.getElementById('edit-kilometraje').value) || 0,
+          empresa_asociada: document.getElementById('edit-empresa_asociada').value,
+          proxima_mantencion_km: parseInt(document.getElementById('edit-proxima_mantencion_km').value) || 0,
+          torque_del_izq: document.getElementById('edit-torque-del-izq-input').value,
+          torque_del_der: document.getElementById('edit-torque-del-der-input').value,
+          torque_tra_izq: document.getElementById('edit-torque-tra-izq-input').value,
+          torque_tra_der: document.getElementById('edit-torque-tra-der-input').value,
+          obs_delantero: document.getElementById('edit-obs-delantero').value,
+          obs_trasero: document.getElementById('edit-obs-trasero').value,
+          observaciones_rodado: document.getElementById('edit-observaciones_rodado').value,
+          observaciones_frenos: document.getElementById('edit-observaciones_frenos').value,
+          observaciones_transmision: document.getElementById('edit-observaciones_transmision').value,
+          observaciones_suspension: document.getElementById('edit-observaciones_suspension').value,
+          observaciones_direccion: document.getElementById('edit-observaciones_direccion').value,
+          observaciones_motor: document.getElementById('edit-observaciones_motor').value,
+          observaciones_otros: document.getElementById('edit-observaciones_otros').value,
+          observaciones_finales: document.getElementById('edit-observaciones_finales').value,
+          firma_mecanico: document.getElementById('edit-firma_mecanico').value,
+          hecho_por: document.getElementById('edit-responsable').value,
+          responsable: document.getElementById('edit-responsable').value,
+          autorizado_por: document.getElementById('edit-firma_mecanico').value,
+          checklist_data: datosChecklist,
+          verificacion_tornillos: boltsState,
+          insumos: boltsState,
+          updated_at: new Date().toISOString()
+        };
+        
+        // Remover campos vacíos
+        Object.keys(datosActualizados).forEach(key => {
+          if (datosActualizados[key] === undefined || datosActualizados[key] === null || datosActualizados[key] === '') {
+            delete datosActualizados[key];
+          }
+        });
+        
+        console.log('Datos a actualizar:', datosActualizados);
+        
+        // Actualizar en Supabase
+        const { data, error } = await supabaseClient
+          .from('mantenimientos')
+          .update(datosActualizados)
+          .eq('id', id)
+          .select();
+        
+        if (error) throw error;
+        
+        mostrarExito('Pauta actualizada correctamente');
+        cerrarModal();
+        cargarPautas(); // Recargar datos
+        
+      } catch (error) {
+        console.error('Error al guardar edición:', error);
+        mostrarError('Error al guardar los cambios: ' + error.message);
+      }
+    }
+
+    // Mostrar vista previa de impresión
+    function mostrarVistaPreviaImpresion() {
+      // Obtener datos actuales
+      const datos = obtenerDatosActualesParaImpresion();
+      
+      // Generar contenido optimizado para impresión
+      const printContent = generarHTMLImpresionCompacto(datos);
+      
+      // Mostrar en el modal de vista previa
+      document.getElementById('print-preview-body').innerHTML = printContent;
+      
+      // Mostrar modal de vista previa
+      document.getElementById('printPreviewModal').style.display = 'block';
+    }
+
+    // Obtener datos actuales del formulario para impresión
+    function obtenerDatosActualesParaImpresion() {
+      const datos = {
+        // Información general
+        id: document.getElementById('edit-id').value,
+        fecha: document.getElementById('edit-fecha').value,
+        responsable: document.getElementById('edit-responsable').value,
+        patente: document.getElementById('edit-patente').value,
+        vehiculo: document.getElementById('edit-vehiculo').value,
+        kilometraje: document.getElementById('edit-kilometraje').value,
+        empresa_asociada: document.getElementById('edit-empresa_asociada').value,
+        proxima_mantencion_km: document.getElementById('edit-proxima_mantencion_km').value,
+        
+        // Torques
+        torque_del_izq: document.getElementById('edit-torque-del-izq-input').value,
+        torque_del_der: document.getElementById('edit-torque-del-der-input').value,
+        torque_tra_izq: document.getElementById('edit-torque-tra-izq-input').value,
+        torque_tra_der: document.getElementById('edit-torque-tra-der-input').value,
+        
+        // Observaciones
+        obs_delantero: document.getElementById('edit-obs-delantero').value,
+        obs_trasero: document.getElementById('edit-obs-trasero').value,
+        observaciones_rodado: document.getElementById('edit-observaciones_rodado').value,
+        observaciones_frenos: document.getElementById('edit-observaciones_frenos').value,
+        observaciones_transmision: document.getElementById('edit-observaciones_transmision').value,
+        observaciones_suspension: document.getElementById('edit-observaciones_suspension').value,
+        observaciones_direccion: document.getElementById('edit-observaciones_direccion').value,
+        observaciones_motor: document.getElementById('edit-observaciones_motor').value,
+        observaciones_otros: document.getElementById('edit-observaciones_otros').value,
+        observaciones_finales: document.getElementById('edit-observaciones_finales').value,
+        firma_mecanico: document.getElementById('edit-firma_mecanico').value,
+        
+        // Checklist
+        checklist: recolectarDatosChecklistEdit(),
+        pernos: recolectarEstadoPernosEdit()
+      };
+      
+      return datos;
+    }
+
+    // Generar HTML optimizado para impresión en 2 páginas
+    function generarHTMLImpresionCompacto(datos) {
+      const fechaFormateada = datos.fecha ? formatDate(datos.fecha) : formatDate(new Date());
+      const otNumber = datos.id.toString().padStart(4, '0');
+      
+      // Función para generar tabla compacta de checklist
+      function generarTablaChecklistCompacta(items, titulo) {
+        let filas = '';
+        items.forEach(item => {
+          const itemData = datos.checklist[item.seccion]?.[item.id] || {};
+          const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+          const observacion = itemData.observacion || '';
+          
+          filas += `
+            <tr style="font-size: 7pt;">
+              <td style="padding: 2px 3px; border: 1px solid #ccc;">
+                <div style="display: flex; align-items: flex-start; gap: 3px;">
+                  <div style="background: #2c5282; color: white; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 7pt; flex-shrink: 0; margin-top: 1px;">
+                    ${item.id}
+                  </div>
+                  <span>${item.descripcion}</span>
+                </div>
+              </td>
+              <td style="padding: 2px 3px; border: 1px solid #ccc; text-align: center; font-size: 8pt; width: 20px;">
+                ${estado}
+              </td>
+              <td style="padding: 2px 3px; border: 1px solid #ccc; font-size: 6.5pt; width: 60px;">
+                ${observacion}
+              </td>
+            </tr>
+          `;
+        });
+        
+        return `
+          <div style="margin: 5px 0;">
+            <div style="background: #2c5282; color: white; padding: 3px; font-weight: bold; font-size: 8pt; margin-bottom: 3px;">${titulo}</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 7pt;">
+              <thead>
+                <tr style="background: #f0f0f0;">
+                  <th style="padding: 3px; border: 1px solid #ccc; text-align: left; width: 70%;">ITEM</th>
+                  <th style="padding: 3px; border: 1px solid #ccc; text-align: center; width: 10%;">ESTADO</th>
+                  <th style="padding: 3px; border: 1px solid #ccc; text-align: left; width: 20%;">OBSERVACIONES</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filas}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+      
+      // Agrupar items por sección para el checklist
+      const itemsAgrupados = [
+        { seccion: 'sistemaRodado', titulo: 'SISTEMA DE RODADO', items: checklistItems.sistemaRodado.map(item => ({...item, seccion: 'sistemaRodado'})) },
+        { seccion: 'sistemaFrenos', titulo: 'SISTEMA DE FRENOS', items: checklistItems.sistemaFrenos.map(item => ({...item, seccion: 'sistemaFrenos'})) },
+        { seccion: 'transmision', titulo: 'TRANSMISIÓN', items: checklistItems.transmision.map(item => ({...item, seccion: 'transmision'})) },
+        { seccion: 'suspension', titulo: 'SUSPENSIÓN', items: checklistItems.suspension.map(item => ({...item, seccion: 'suspension'})) },
+        { seccion: 'direccion', titulo: 'DIRECCIÓN', items: checklistItems.direccion.map(item => ({...item, seccion: 'direccion'})) },
+        { seccion: 'motor', titulo: 'MOTOR', items: checklistItems.motor.map(item => ({...item, seccion: 'motor'})) },
+        { seccion: 'otros', titulo: 'OTROS PUNTOS', items: checklistItems.otros.map(item => ({...item, seccion: 'otros'})) }
+      ];
+      
+      // Dividir en dos páginas (primera mitad en página 1, segunda mitad en página 2)
+      const primeraMitad = itemsAgrupados.slice(0, 4); // Sistema Rodado, Frenos, Transmisión, Suspensión
+      const segundaMitad = itemsAgrupados.slice(4); // Dirección, Motor, Otros
+      
+      // Generar gráficos de pernos compactos
+      function generarSVGPernosCompacto(wheelId, boltsData) {
+        let boltsHTML = '';
+        for (let i = 1; i <= 10; i++) {
+          const marked = boltsData[i] ? 'fill="black"' : 'fill="white"';
+          let cx, cy;
+          
+          // Calcular posición del perno
+          const angle = (i-1) * 36;
+          const rad = angle * Math.PI / 180;
+          cx = 50 + 38 * Math.sin(rad);
+          cy = 50 - 38 * Math.cos(rad);
+          
+          boltsHTML += `<circle cx="${cx}" cy="${cy}" r="3.5" ${marked} stroke="black" stroke-width="0.5" />`;
+        }
+        
+        return `
+          <svg viewBox="0 0 100 100" width="50" height="50">
+            <circle cx="50" cy="50" r="15" fill="black" />
+            ${boltsHTML}
+          </svg>
+        `;
+      }
+      
+      const pernosHTML = `
+        <div style="margin: 8px 0; page-break-inside: avoid;">
+          <div style="background: #2c5282; color: white; padding: 3px; font-weight: bold; font-size: 8pt; text-align: center; margin-bottom: 5px;">
+            VERIFICACIÓN VISUAL DE TORNILLOS - TORQUE DE RUEDAS
+          </div>
+          
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <div style="flex: 1;">
+              <strong style="font-size: 7pt;">Observaciones:</strong>
+              <div style="border: 1px solid #ccc; padding: 3px; min-height: 50px; font-size: 7pt; margin-top: 2px;">
+                ${datos.obs_delantero || ''}
+              </div>
+            </div>
+            <div style="flex: 2; border: 1px solid #ccc; padding: 5px;">
+              <strong style="display: block; text-align: center; font-size: 8pt; margin-bottom: 5px;">Eje Delantero</strong>
+              <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>${datos.torque_del_izq || ''} Nm</div>
+                </div>
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>Izquierda</div>
+                  ${generarSVGPernosCompacto('del-izq', datos.pernos['del-izq'] || {})}
+                </div>
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>Derecha</div>
+                  ${generarSVGPernosCompacto('del-der', datos.pernos['del-der'] || {})}
+                </div>
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>${datos.torque_del_der || ''} Nm</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 8px;">
+            <div style="flex: 1;">
+              <strong style="font-size: 7pt;">Observaciones:</strong>
+              <div style="border: 1px solid #ccc; padding: 3px; min-height: 50px; font-size: 7pt; margin-top: 2px;">
+                ${datos.obs_trasero || ''}
+              </div>
+            </div>
+            <div style="flex: 2; border: 1px solid #ccc; padding: 5px;">
+              <strong style="display: block; text-align: center; font-size: 8pt; margin-bottom: 5px;">Eje Trasero</strong>
+              <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>${datos.torque_tra_izq || ''} Nm</div>
+                </div>
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>Izquierda</div>
+                  ${generarSVGPernosCompacto('tra-izq', datos.pernos['tra-izq'] || {})}
+                </div>
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>Derecha</div>
+                  ${generarSVGPernosCompacto('tra-der', datos.pernos['tra-der'] || {})}
+                </div>
+                <div style="text-align: center; font-size: 7pt;">
+                  <div>${datos.torque_tra_der || ''} Nm</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return `
+        <div style="font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.1; padding: 10px;">
+          <!-- Página 1 -->
+          <div style="margin-bottom: 15px; border: 1px solid #000; padding: 5px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 8pt;">
+              <tr>
+                <td rowspan="2" style="width:30%; text-align: center; vertical-align: middle; border: 1px solid #000;">
+                  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 5px;">TRANSPORTES HEREME LTDA.</div>
+                    <div style="font-size: 8pt;">LOGO</div>
+                  </div>
+                </td>
+                <td colspan="2" style="text-align: center; font-weight: bold; font-size: 9pt; border: 1px solid #000;">
+                  TRANSPORTES HEREME LTDA. CONTRATO SIGMA CODELCO ANDINA
+                </td>
+                <td style="width:20%; font-weight: bold; border: 1px solid #000;">COD: RE-MAN-004</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #000;"><strong>FECHA:</strong> ${fechaFormateada}</td>
+                <td style="border: 1px solid #000;"><strong>VERSIÓN:</strong> 02</td>
+                <td style="border: 1px solid #000;"><strong>OT ${otNumber}</strong></td>
+              </tr>
+            </table>
+          </div>
+          
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 8pt;">
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0; width: 25%; padding: 3px; border: 1px solid #ccc;">NOMBRE MECÁNICO:</td>
+              <td style="padding: 3px; border: 1px solid #ccc;">${datos.responsable || ''}</td>
+              <td style="font-weight: bold; background: #f0f0f0; width: 15%; padding: 3px; border: 1px solid #ccc;">FECHA:</td>
+              <td style="padding: 3px; border: 1px solid #ccc;">${fechaFormateada}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0; padding: 3px; border: 1px solid #ccc;">PATENTE:</td>
+              <td style="padding: 3px; border: 1px solid #ccc;">${datos.patente || ''}</td>
+              <td style="font-weight: bold; background: #f0f0f0; padding: 3px; border: 1px solid #ccc;">VEHÍCULO:</td>
+              <td style="padding: 3px; border: 1px solid #ccc;">${datos.vehiculo || ''}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0; padding: 3px; border: 1px solid #ccc;">KILOMETRAJE:</td>
+              <td style="padding: 3px; border: 1px solid #ccc;">${datos.kilometraje || ''} km</td>
+              <td style="font-weight: bold; background: #f0f0f0; padding: 3px; border: 1px solid #ccc;">EMPRESA:</td>
+              <td style="padding: 3px; border: 1px solid #ccc;">${datos.empresa_asociada || 'SIGMA'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0; padding: 3px; border: 1px solid #ccc;">PRÓXIMA MANTENCIÓN:</td>
+              <td colspan="3" style="padding: 3px; border: 1px solid #ccc;">${datos.proxima_mantencion_km || ''} KM</td>
+            </tr>
+          </table>
+          
+          ${primeraMitad.map(grupo => generarTablaChecklistCompacta(grupo.items, grupo.titulo)).join('')}
+          
+          ${pernosHTML}
+          
+          <!-- Salto de página -->
+          <div style="page-break-before: always; height: 10px;"></div>
+          
+          <!-- Página 2 -->
+          ${segundaMitad.map(grupo => generarTablaChecklistCompacta(grupo.items, grupo.titulo)).join('')}
+          
+          <!-- Observaciones generales -->
+          <div style="margin: 8px 0;">
+            <div style="background: #2c5282; color: white; padding: 3px; font-weight: bold; font-size: 8pt; margin-bottom: 3px;">OBSERVACIONES GENERALES</div>
+            <div style="border: 1px solid #ccc; padding: 5px; font-size: 7pt;">
+              <div><strong>Sistema Rodado:</strong> ${datos.observaciones_rodado || ''}</div>
+              <div style="margin-top: 3px;"><strong>Sistema Frenos:</strong> ${datos.observaciones_frenos || ''}</div>
+              <div style="margin-top: 3px;"><strong>Transmisión:</strong> ${datos.observaciones_transmision || ''}</div>
+              <div style="margin-top: 3px;"><strong>Suspensión:</strong> ${datos.observaciones_suspension || ''}</div>
+              <div style="margin-top: 3px;"><strong>Dirección:</strong> ${datos.observaciones_direccion || ''}</div>
+              <div style="margin-top: 3px;"><strong>Motor:</strong> ${datos.observaciones_motor || ''}</div>
+              <div style="margin-top: 3px;"><strong>Otros:</strong> ${datos.observaciones_otros || ''}</div>
+            </div>
+          </div>
+          
+          <!-- Observaciones finales y firma -->
+          <div style="margin: 8px 0;">
+            <div style="background: #2c5282; color: white; padding: 3px; font-weight: bold; font-size: 8pt; margin-bottom: 3px;">OBSERVACIONES FINALES Y FIRMA</div>
+            <div style="border: 1px solid #ccc; padding: 5px; font-size: 7pt; min-height: 40px; margin-bottom: 5px;">
+              ${datos.observaciones_finales || ''}
+            </div>
+            <div style="margin-top: 15px;">
+              <div style="font-weight: bold; font-size: 8pt;">NOMBRE MECÁNICO:</div>
+              <div style="font-size: 9pt; margin-top: 5px;">${datos.firma_mecanico || datos.responsable || ''}</div>
+              <div style="border-top: 1px solid #000; margin-top: 20px; padding-top: 3px; text-align: center; font-size: 7pt;">
+                FIRMA
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Imprimir desde vista previa - VERSIÓN CORREGIDA
+    let imprimiendo = false; // Bandera para evitar múltiples impresiones
+
+    function imprimirDesdeVistaPrevia() {
+      // Evitar múltiples clics
+      if (imprimiendo) return;
+      imprimiendo = true;
+      
+      // Obtener datos actuales
+      const datos = obtenerDatosActualesParaImpresion();
+      
+      // Generar contenido HTML optimizado para impresión
+      const printHTML = generarHTMLImpresionCompleto(datos);
+      
+      // Crear una ventana de impresión
+      const printWindow = window.open('', '_blank');
+      
+      // Escribir el contenido
+      printWindow.document.write(printHTML);
+      printWindow.document.close();
+      
+      // Esperar a que cargue el contenido y luego imprimir
+      setTimeout(() => {
+        try {
+          printWindow.focus();
+          printWindow.print();
+          
+          // Restablecer bandera después de un tiempo
+          setTimeout(() => {
+            imprimiendo = false;
+            // Cerrar ventana después de imprimir (opcional)
+            setTimeout(() => {
+              try {
+                printWindow.close();
+              } catch (e) {
+                // Ignorar error al cerrar
+              }
+            }, 1000);
+          }, 1000);
+        } catch (error) {
+          console.error('Error al imprimir:', error);
+          mostrarError('Error al imprimir: ' + error.message);
+          imprimiendo = false;
+        }
+      }, 500);
+    }
+
+    // Generar HTML completo optimizado para impresión
+    function generarHTMLImpresionCompleto(datos) {
+      const fechaFormateada = datos.fecha ? formatDate(datos.fecha) : formatDate(new Date());
+      const otNumber = datos.id.toString().padStart(4, '0');
+      
+      // URL base para imágenes (modificar según sea necesario)
+      const logoUrl = 'img/logo.png';
+      
+      return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Pauta Preventiva 5000KM - OT ${otNumber}</title>
+          <meta charset="UTF-8">
+          <style>
+            @page {
+              size: letter;
+              margin: 0.3cm;
+            }
+            
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 8pt;
+              line-height: 1.1;
+              margin: 0;
+              padding: 0.3cm;
+            }
+            
+            .header-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 5px;
+              border: 1px solid #000;
+            }
+            
+            .header-table td {
+              border: 1px solid #000;
+              padding: 3px;
+              vertical-align: middle;
+            }
+            
+            .info-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 8px;
+              font-size: 7pt;
+            }
+            
+            .info-table td {
+              border: 1px solid #ccc;
+              padding: 3px;
+            }
+            
+            .logo-container {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+            }
+            
+            .logo-text {
+              font-weight: bold;
+              font-size: 10pt;
+              margin-bottom: 3px;
+            }
+            
+            .logo-image {
+              max-height: 40px;
+              width: auto;
+            }
+            
+            .section-header {
+              background: #2c5282;
+              color: white;
+              padding: 3px;
+              font-weight: bold;
+              font-size: 8pt;
+              margin: 5px 0 3px 0;
+            }
+            
+            .checklist-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 5px;
+              font-size: 7pt;
+            }
+            
+            .checklist-table th, .checklist-table td {
+              border: 1px solid #ccc;
+              padding: 2px 3px;
+              vertical-align: top;
+            }
+            
+            .checklist-table th {
+              background: #f0f0f0;
+              font-weight: bold;
+            }
+            
+            .item-number {
+              background: #2c5282;
+              color: white;
+              width: 14px;
+              height: 14px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              font-size: 7pt;
+              margin-right: 3px;
+              flex-shrink: 0;
+            }
+            
+            .check-item {
+              display: flex;
+              align-items: flex-start;
+              gap: 3px;
+            }
+            
+            .torque-container {
+              border: 1px solid #ccc;
+              padding: 5px;
+              margin: 5px 0;
+            }
+            
+            .wheels-wrapper {
+              display: flex;
+              justify-content: space-around;
+              align-items: center;
+              margin-top: 5px;
+            }
+            
+            .wheel-group {
+              text-align: center;
+              font-size: 7pt;
+            }
+            
+            .observaciones-box {
+              border: 1px solid #ccc;
+              padding: 5px;
+              min-height: 40px;
+              font-size: 7pt;
+              margin-top: 3px;
+            }
+            
+            .firma-section {
+              margin-top: 15px;
+              border-top: 1px solid #000;
+              padding-top: 5px;
+            }
+            
+            .page-break {
+              page-break-before: always;
+            }
+            
+            @media print {
+              body {
+                font-size: 7pt !important;
+              }
+              
+              .header-table, .info-table {
+                font-size: 7pt !important;
+              }
+              
+              .checklist-table {
+                font-size: 6.5pt !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <!-- Página 1 -->
+          <table class="header-table">
+            <tr>
+              <td rowspan="2" style="width:30%; text-align: center;">
+                <div class="logo-container">
+                  <div class="logo-text">TRANSPORTES HEREME LTDA.</div>
+                  <img src="${logoUrl}" alt="Logo HEREME" class="logo-image" onerror="this.style.display='none'; this.parentNode.innerHTML+='<div style=\'font-size:8pt;\'>LOGO</div>';">
+                </div>
+              </td>
+              <td colspan="2" style="text-align: center; font-weight: bold; font-size: 9pt;">
+                TRANSPORTES HEREME LTDA. CONTRATO SIGMA CODELCO ANDINA
+              </td>
+              <td style="width:20%; font-weight: bold;">COD: RE-MAN-004</td>
+            </tr>
+            <tr>
+              <td><strong>FECHA:</strong> ${fechaFormateada}</td>
+              <td><strong>VERSIÓN:</strong> 02</td>
+              <td><strong>OT ${otNumber}</strong></td>
+            </tr>
+          </table>
+          
+          <table class="info-table">
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0; width: 25%;">NOMBRE MECÁNICO:</td>
+              <td>${datos.responsable || ''}</td>
+              <td style="font-weight: bold; background: #f0f0f0; width: 15%;">FECHA:</td>
+              <td>${fechaFormateada}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0;">PATENTE:</td>
+              <td>${datos.patente || ''}</td>
+              <td style="font-weight: bold; background: #f0f0f0;">VEHÍCULO:</td>
+              <td>${datos.vehiculo || ''}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0;">KILOMETRAJE:</td>
+              <td>${datos.kilometraje || ''} km</td>
+              <td style="font-weight: bold; background: #f0f0f0;">EMPRESA:</td>
+              <td>${datos.empresa_asociada || 'SIGMA'}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; background: #f0f0f0;">PRÓXIMA MANTENCIÓN:</td>
+              <td colspan="3">${datos.proxima_mantencion_km || ''} KM</td>
+            </tr>
+          </table>
+          
+          <!-- Sistema de Rodado -->
+          <div class="section-header">SISTEMA DE RODADO</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.sistemaRodado.map(item => {
+                const itemData = datos.checklist.sistemaRodado?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <!-- Verificación de Tornillos -->
+          <div class="section-header">VERIFICACIÓN VISUAL DE TORNILLOS - TORQUE DE RUEDAS</div>
+          
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <div style="flex: 1;">
+              <strong style="font-size: 7pt;">Observaciones:</strong>
+              <div class="observaciones-box">${datos.obs_delantero || ''}</div>
+            </div>
+            <div class="torque-container" style="flex: 2;">
+              <strong style="display: block; text-align: center; font-size: 8pt; margin-bottom: 5px;">Eje Delantero</strong>
+              <div class="wheels-wrapper">
+                <div class="wheel-group">
+                  <div>${datos.torque_del_izq || ''} Nm</div>
+                </div>
+                <div class="wheel-group">
+                  <div>Izquierda</div>
+                  <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="15" fill="black" />
+                    ${Array.from({length: 10}, (_, i) => {
+                      const marked = datos.pernos['del-izq']?.[i+1] ? 'fill="black"' : 'fill="white"';
+                      const angle = i * 36;
+                      const rad = angle * Math.PI / 180;
+                      const cx = 50 + 38 * Math.sin(rad);
+                      const cy = 50 - 38 * Math.cos(rad);
+                      return `<circle cx="${cx}" cy="${cy}" r="3.5" ${marked} stroke="black" stroke-width="0.5" />`;
+                    }).join('')}
+                  </svg>
+                </div>
+                <div class="wheel-group">
+                  <div>Derecha</div>
+                  <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="15" fill="black" />
+                    ${Array.from({length: 10}, (_, i) => {
+                      const marked = datos.pernos['del-der']?.[i+1] ? 'fill="black"' : 'fill="white"';
+                      const angle = i * 36;
+                      const rad = angle * Math.PI / 180;
+                      const cx = 50 + 38 * Math.sin(rad);
+                      const cy = 50 - 38 * Math.cos(rad);
+                      return `<circle cx="${cx}" cy="${cy}" r="3.5" ${marked} stroke="black" stroke-width="0.5" />`;
+                    }).join('')}
+                  </svg>
+                </div>
+                <div class="wheel-group">
+                  <div>${datos.torque_del_der || ''} Nm</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 8px;">
+            <div style="flex: 1;">
+              <strong style="font-size: 7pt;">Observaciones:</strong>
+              <div class="observaciones-box">${datos.obs_trasero || ''}</div>
+            </div>
+            <div class="torque-container" style="flex: 2;">
+              <strong style="display: block; text-align: center; font-size: 8pt; margin-bottom: 5px;">Eje Trasero</strong>
+              <div class="wheels-wrapper">
+                <div class="wheel-group">
+                  <div>${datos.torque_tra_izq || ''} Nm</div>
+                </div>
+                <div class="wheel-group">
+                  <div>Izquierda</div>
+                  <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="15" fill="black" />
+                    ${Array.from({length: 10}, (_, i) => {
+                      const marked = datos.pernos['tra-izq']?.[i+1] ? 'fill="black"' : 'fill="white"';
+                      const angle = i * 36;
+                      const rad = angle * Math.PI / 180;
+                      const cx = 50 + 38 * Math.sin(rad);
+                      const cy = 50 - 38 * Math.cos(rad);
+                      return `<circle cx="${cx}" cy="${cy}" r="3.5" ${marked} stroke="black" stroke-width="0.5" />`;
+                    }).join('')}
+                  </svg>
+                </div>
+                <div class="wheel-group">
+                  <div>Derecha</div>
+                  <svg viewBox="0 0 100 100" width="50" height="50">
+                    <circle cx="50" cy="50" r="15" fill="black" />
+                    ${Array.from({length: 10}, (_, i) => {
+                      const marked = datos.pernos['tra-der']?.[i+1] ? 'fill="black"' : 'fill="white"';
+                      const angle = i * 36;
+                      const rad = angle * Math.PI / 180;
+                      const cx = 50 + 38 * Math.sin(rad);
+                      const cy = 50 - 38 * Math.cos(rad);
+                      return `<circle cx="${cx}" cy="${cy}" r="3.5" ${marked} stroke="black" stroke-width="0.5" />`;
+                    }).join('')}
+                  </svg>
+                </div>
+                <div class="wheel-group">
+                  <div>${datos.torque_tra_der || ''} Nm</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 8px;">
+            <strong style="font-size: 7pt;">Observaciones Generales del Sistema de Rodado:</strong>
+            <div class="observaciones-box">${datos.observaciones_rodado || ''}</div>
+          </div>
+          
+          <!-- Sistema de Frenos -->
+          <div class="section-header">SISTEMA DE FRENOS</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.sistemaFrenos.map(item => {
+                const itemData = datos.checklist.sistemaFrenos?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 5px;">
+            <strong style="font-size: 7pt;">Observaciones Generales del Sistema de Frenos:</strong>
+            <div class="observaciones-box" style="min-height: 30px;">${datos.observaciones_frenos || ''}</div>
+          </div>
+          
+          <!-- Salto de página -->
+          <div class="page-break"></div>
+          
+          <!-- Página 2 -->
+          <!-- Transmisión -->
+          <div class="section-header">COMPONENTES DE TRANSMISIÓN</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.transmision.map(item => {
+                const itemData = datos.checklist.transmision?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 5px;">
+            <strong style="font-size: 7pt;">Observaciones Generales de Transmisión:</strong>
+            <div class="observaciones-box" style="min-height: 20px;">${datos.observaciones_transmision || ''}</div>
+          </div>
+          
+          <!-- Suspensión -->
+          <div class="section-header">COMPONENTES DE SUSPENSIÓN</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.suspension.map(item => {
+                const itemData = datos.checklist.suspension?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 5px;">
+            <strong style="font-size: 7pt;">Observaciones Generales de Suspensión:</strong>
+            <div class="observaciones-box" style="min-height: 20px;">${datos.observaciones_suspension || ''}</div>
+          </div>
+          
+          <!-- Dirección -->
+          <div class="section-header">COMPONENTES DE DIRECCIÓN</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.direccion.map(item => {
+                const itemData = datos.checklist.direccion?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 5px;">
+            <strong style="font-size: 7pt;">Observaciones Generales de Dirección:</strong>
+            <div class="observaciones-box" style="min-height: 20px;">${datos.observaciones_direccion || ''}</div>
+          </div>
+          
+          <!-- Motor -->
+          <div class="section-header">MOTOR</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.motor.map(item => {
+                const itemData = datos.checklist.motor?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 5px;">
+            <strong style="font-size: 7pt;">Observaciones Generales del Motor:</strong>
+            <div class="observaciones-box" style="min-height: 30px;">${datos.observaciones_motor || ''}</div>
+          </div>
+          
+          <!-- Otros Puntos -->
+          <div class="section-header">OTROS PUNTOS A CHEQUEAR</div>
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th width="70%">ITEM</th>
+                <th width="10%">ESTADO</th>
+                <th width="20%">OBSERVACIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${checklistItems.otros.map(item => {
+                const itemData = datos.checklist.otros?.[item.id] || {};
+                const estado = itemData.estado === 'si' ? '✓' : (itemData.estado === 'no' ? '✗' : '');
+                return `
+                  <tr>
+                    <td>
+                      <div class="check-item">
+                        <div class="item-number">${item.id}</div>
+                        <span>${item.descripcion}</span>
+                      </div>
+                    </td>
+                    <td style="text-align: center; font-size: 8pt;">${estado}</td>
+                    <td>${itemData.observacion || ''}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 5px;">
+            <strong style="font-size: 7pt;">Observaciones Generales:</strong>
+            <div class="observaciones-box" style="min-height: 30px;">${datos.observaciones_otros || ''}</div>
+          </div>
+          
+          <!-- Observaciones Finales y Firma -->
+          <div class="section-header">OBSERVACIONES Y FIRMAS</div>
+          
+          <div style="margin-top: 8px;">
+            <strong style="font-size: 7pt;">Observaciones del Mantenedor:</strong>
+            <div class="observaciones-box" style="min-height: 40px;">${datos.observaciones_finales || ''}</div>
+          </div>
+          
+          <div class="firma-section">
+            <div style="font-weight: bold; font-size: 8pt;">NOMBRE MECÁNICO:</div>
+            <div style="font-size: 9pt; margin-top: 5px;">${datos.firma_mecanico || datos.responsable || ''}</div>
+            <div style="border-top: 1px solid #000; margin-top: 20px; padding-top: 3px; text-align: center; font-size: 7pt;">
+              FIRMA
+            </div>
+          </div>
+          
+          <script>
+            // Imprimir automáticamente
+            window.onload = function() {
+              setTimeout(() => {
+                window.print();
+                // Cerrar ventana después de imprimir
+                setTimeout(() => {
+                  window.close();
+                }, 500);
+              }, 500);
+            };
+          <\/script>
+        </body>
+        </html>
+      `;
+    }
+
+    // Cerrar vista previa
+    function cerrarVistaPrevia() {
+      document.getElementById('printPreviewModal').style.display = 'none';
+    }
+
+    // Cerrar modal de edición
+    function cerrarModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarPautas();
+      
+      // Cerrar modales al hacer clic fuera
+      window.onclick = function(event) {
+        const editModal = document.getElementById('editModal');
+        const printModal = document.getElementById('printPreviewModal');
+        
+        if (event.target == editModal) {
+          cerrarModal();
+        }
+        if (event.target == printModal) {
+          cerrarVistaPrevia();
+        }
+      };
+    });
+  </script>
+</body>
+</html>

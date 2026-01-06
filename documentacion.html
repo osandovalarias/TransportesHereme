@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Documentación - HGT Tour</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <style>
+        :root {
+            --color-primary: #3f72af;
+            --color-secondary: #dbe2ef;
+            --color-text: #112d4e;
+            --color-error: #e74c3c;
+            --color-success: #2ecc71;
+            --color-warning: #f39c12;
+            --color-info: #17a2b8;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3f72af, #dbe2ef);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+        }
+        
+        h1 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--color-primary);
+        }
+        
+        h2 {
+            color: var(--color-primary);
+            font-size: 1.4rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--color-secondary);
+            padding-bottom: 8px;
+        }
+        
+        /* Estilos para las pestañas */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: #f1f1f1;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Estilos para los botones */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2c5282;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger {
+            background-color: var(--color-error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-warning {
+            background-color: var(--color-warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d68910;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-email {
+            background-color: #6f42c1;
+            color: white;
+        }
+        
+        .btn-email:hover {
+            background-color: #5a32a3;
+        }
+        
+        .btn-info {
+            background-color: var(--color-info);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        
+        /* Mensajes de estado */
+        .status-message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: var(--border-radius);
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: var(--color-error);
+            border-left: 4px solid var(--color-error);
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: var(--color-success);
+            border-left: 4px solid var(--color-success);
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            color: var(--color-info);
+            border-left: 4px solid var(--color-info);
+        }
+        
+        /* Estilos para la tabla */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        th {
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .actions-cell {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* Estilos para resaltar fechas */
+        .date-cell {
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .date-expired {
+            background-color: #ffdddd;
+            color: var(--color-error);
+            font-weight: bold;
+        }
+        
+        .date-warning {
+            background-color: #fff3cd;
+            color: var(--color-warning);
+            font-weight: bold;
+        }
+        
+        .days-remaining {
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        
+        .days-valid {
+            color: var(--color-success);
+        }
+        
+        .days-pending {
+            color: var(--color-warning);
+        }
+        
+        .days-expired {
+            color: var(--color-error);
+        }
+        
+        /* Estilos para el formulario */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        /* Estilos para los filtros */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--color-secondary);
+            border-radius: var(--border-radius);
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .filter-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+        
+        /* Estatus de conexión */
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .connection-good {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .connection-bad {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Calendario */
+        #calendar {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+        
+        .fc-event {
+            cursor: pointer;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        
+        .fc-event:hover {
+            opacity: 1;
+        }
+        
+        /* Colores personalizados para eventos del calendario */
+        .fc-event-valid {
+            background-color: #a8df8e; /* Verde suave */
+            border-color: #a8df8e;
+        }
+        
+        .fc-event-pending {
+            background-color: #f3b664; /* Naranja suave */
+            border-color: #f3b664;
+        }
+        
+        .fc-event-expired {
+            background-color: #ff9b9b; /* Rojo suave */
+            border-color: #ff9b9b;
+        }
+        
+        /* Estilo para los días de la semana (dom, lun, mar, mié, jue, vie, sáb) */
+        .fc-col-header-cell-cushion {
+            color: black !important;
+            font-weight: bold;
+        }
+        
+        /* Configuración de reportes automáticos */
+        .auto-report-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .auto-report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background-color: var(--color-success);
+        }
+        
+        .status-inactive {
+            background-color: var(--color-error);
+        }
+        
+        .next-run-info {
+            background-color: #e8f4fd;
+            border-left: 4px solid var(--color-primary);
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .schedule-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .chile-time-display {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3f72af;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .time-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .time-input-label {
+            min-width: 80px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .actions-cell {
+                flex-direction: column;
+            }
+            
+            .schedule-config {
+                grid-template-columns: 1fr;
+            }
+            
+            .time-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .time-input-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="connectionStatus" class="connection-status"></div>
+    
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button class="btn btn-back" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <h1 style="margin: 0 auto;">Gestión de Documentación de Máquinas</h1>
+            <button id="btn-enviar-email" class="btn btn-email">
+                <i class="fas fa-envelope"></i> Enviar Reporte
+            </button>
+        </div>
+        
+        <div id="error-message" class="status-message error" style="display: none;"></div>
+        <div id="success-message" class="status-message success" style="display: none;"></div>
+        <div id="email-status" class="status-message" style="display: none;"></div>
+        <div id="auto-report-status" class="status-message info" style="display: none;"></div>
+        
+        <!-- Pestañas -->
+        <div class="tabs">
+            <div class="tab active" data-tab="listado">Listado</div>
+            <div class="tab" data-tab="ingreso">Ingreso</div>
+            <div class="tab" data-tab="calendario">Calendario</div>
+            <div class="tab" data-tab="automatico">Reportes Automáticos</div>
+        </div>
+        
+        <!-- Contenido de pestaña de Listado -->
+        <div id="listado" class="tab-content active">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filter-id">ID</label>
+                    <input type="text" id="filter-id" class="filter-control" placeholder="Buscar por ID">
+                </div>
+                <div class="filter-group">
+                    <label for="filter-cto">CTO</label>
+                    <input type="text" id="filter-cto" class="filter-control" placeholder="Buscar por CTO">
+                </div>
+                <div class="filter-group">
+                    <label for="filter-patente">Patente</label>
+                    <select id="filter-patente" class="filter-control">
+                        <option value="">Todas las patentes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-status">Estado Documentos</label>
+                    <select id="filter-status" class="filter-control">
+                        <option value="all">Todos</option>
+                        <option value="valid">Vigentes</option>
+                        <option value="pending">Por vencer</option>
+                        <option value="expired">Vencidos</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-month">Mes de Vencimiento</label>
+                    <select id="filter-month" class="filter-control">
+                        <option value="all">Todos los meses</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="align-self: flex-end;">
+                    <button id="btn-buscar" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button id="btn-limpiar" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>CTO</th>
+                            <th>Modelo</th>
+                            <th>Patente</th>
+                            <th>Permiso Circulación</th>
+                            <th>Seguro</th>
+                            <th>Revisión Técnica</th>
+                            <th>Cert. Operatividad</th>
+                            <th>Sistema Supresión</th>
+                            <th>Seguro Terceros</th>
+                            <th>Decreto 80</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody">
+                        <tr>
+                            <td colspan="12">Cargando documentación...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Contenido de pestaña de Ingreso -->
+        <div id="ingreso" class="tab-content">
+            <div class="form-container">
+                <form id="form-documentacion">
+                    <input type="hidden" id="documentacion-id">
+                    
+                    <div class="form-group">
+                        <label for="cto">CTO *</label>
+                        <input type="text" id="cto" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modelo">Modelo</label>
+                        <input type="text" id="modelo" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patente">Patente</label>
+                        <input type="text" id="patente" class="form-control" placeholder="Ingrese patente">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_vencimiento_permiso_circulacion">Vencimiento Permiso Circulación</label>
+                        <input type="date" id="fecha_vencimiento_permiso_circulacion" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="seguro_vencimiento">Vencimiento Seguro</label>
+                        <input type="date" id="seguro_vencimiento" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="revision_tecnica_vencimiento">Vencimiento Revisión Técnica</label>
+                        <input type="date" id="revision_tecnica_vencimiento" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="certificado_operatividad_vencimiento">Vencimiento Certificado Operatividad</label>
+                        <input type="date" id="certificado_operatividad_vencimiento" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sistema_supresion_vencimiento">Vencimiento Sistema Supresión</label>
+                        <input type="date" id="sistema_supresion_vencimiento" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="seguro_terceros_vencimiento">Vencimiento Seguro Terceros</label>
+                        <input type="date" id="seguro_terceros_vencimiento" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="decreto_80_vencimiento">Vencimiento Decreto 80</label>
+                        <input type="date" id="decreto_80_vencimiento" class="form-control">
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" id="btn-guardar">
+                            <i class="fas fa-save"></i> Guardar Documentación
+                        </button>
+                        <button type="button" class="btn btn-danger" id="btn-cancelar" style="display: none;">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Contenido de pestaña de Calendario -->
+        <div id="calendario" class="tab-content">
+            <div id="calendar"></div>
+        </div>
+        
+        <!-- Contenido de pestaña de Reportes Automáticos -->
+        <div id="automatico" class="tab-content">
+            <div class="auto-report-card">
+                <div class="auto-report-header">
+                    <h2>Configuración de Reportes Automáticos</h2>
+                    <div>
+                        <span class="status-indicator" id="auto-report-status-indicator"></span>
+                        <span id="auto-report-status-text">Inactivo</span>
+                    </div>
+                </div>
+                
+                <div class="chile-time-display">
+                    <i class="fas fa-clock"></i> Hora actual en Chile: 
+                    <span id="chile-time">--:--:--</span>
+                </div>
+                
+                <p>Configuración para enviar automáticamente reportes con los documentos que vencerán en el mes y año seleccionado.</p>
+                
+                <div class="next-run-info">
+                    <i class="fas fa-bell"></i> Próximo envío programado: 
+                    <span id="next-run-time">--:--</span>
+                </div>
+                
+                <div class="schedule-config">
+                    <div class="form-group">
+                        <label>Hora de envío (Chile)</label>
+                        <div class="time-input-group">
+                            <span class="time-input-label">Hora:</span>
+                            <input type="time" id="report-time" class="form-control" value="17:10">
+                        </div>
+                        <small class="text-muted">Seleccione la hora deseada para el envío diario</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="report-email">Email de destino</label>
+                        <input type="email" id="report-email" class="form-control" value="osandovala@gmail.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="report-month">Mes a reportar</label>
+                        <select id="report-month" class="form-control">
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="report-year">Año a reportar</label>
+                        <select id="report-year" class="form-control">
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 20px;">
+                    <button class="btn btn-primary" id="btn-activar-reporte">
+                        <i class="fas fa-power-off"></i> Activar Reporte Automático
+                    </button>
+                    <button class="btn btn-danger" id="btn-desactivar-reporte">
+                        <i class="fas fa-ban"></i> Desactivar
+                    </button>
+                    <button class="btn btn-info" id="btn-test-reporte">
+                        <i class="fas fa-paper-plane"></i> Probar Ahora
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Últimos envíos</label>
+                    <div id="last-runs-container" style="margin-top: 10px;">
+                        <div class="alert alert-secondary">No hay registros de envíos</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auto-report-card">
+                <h2>Documentos a Incluir en el Reporte</h2>
+                <p>Se incluirán los documentos que vencerán en el mes y año seleccionado:</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patente</th>
+                                <th>Tipo Documento</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Días Restantes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="next-expirations-body">
+                            <tr>
+                                <td colspan="5">Cargando próximos vencimientos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es-chile.min.js"></script>
+    <!-- Incluir EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // ============================================
+        // CONFIGURACIÓN ACTUALIZADA DE SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://jrbluqwjmjsfoezzmjno.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Aw4gC43MsdZBMcTUnFT9Kg_hvfvDVHH';
+        
+        // Declarar variables globales
+        let supabaseClient;
+        let modoEdicion = false;
+        let isConnected = false;
+        let patentesDisponibles = [];
+        let calendar;
+        let autoReportInterval;
+        let autoReportActive = false;
+        let lastReportSent = null;
+        let lastRuns = [];
+        let reportHour = 17; // Hora por defecto
+        let reportMinute = 10; // Minuto por defecto
+        let reportMonth = new Date().getMonth() + 1; // Mes actual por defecto
+        let reportYear = new Date().getFullYear(); // Año actual por defecto
+        
+        // Inicializar Supabase
+        function inicializarSupabase() {
+            if (!supabaseClient && window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+            return supabaseClient;
+        }
+        
+        // Configuración de EmailJS
+        (function() {
+            emailjs.init('GTwhaObjJL2yucEbb'); // Usando tu Public Key
+        })();
+        
+        // Función para verificar la conexión con Supabase
+        async function checkSupabaseConnection() {
+            const statusElement = document.getElementById('connectionStatus');
+            const supabase = inicializarSupabase();
+            
+            if (!supabase) {
+                console.error('Supabase no está inicializado');
+                mostrarError('Error de conexión con la base de datos');
+                return;
+            }
+            
+            try {
+                // Intenta una operación simple para verificar la conexión
+                const { error } = await supabase
+                    .from('documentacion')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                isConnected = true;
+                statusElement.style.display = 'none';
+                console.log('Conexión con Supabase verificada correctamente');
+            } catch (error) {
+                isConnected = false;
+                statusElement.textContent = 'Error de conexión';
+                statusElement.className = 'connection-status connection-bad';
+                statusElement.style.display = 'block';
+                console.error('Error verificando conexión con Supabase:', error);
+                
+                // Mostrar mensaje de error más detallado
+                mostrarError('Error de conexión con la base de datos. Por favor verifica tu conexión a internet e intenta recargar la página.');
+            }
+        }
+        
+        // Función para mostrar mensajes
+        function mostrarError(mensaje) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = mensaje;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 10000);
+        }
+        
+        function mostrarExito(mensaje) {
+            const successElement = document.getElementById('success-message');
+            successElement.textContent = mensaje;
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function mostrarEstadoEmail(mensaje, esExito = true) {
+            const emailStatus = document.getElementById('email-status');
+            emailStatus.textContent = mensaje;
+            emailStatus.className = esExito ? 'status-message success' : 'status-message error';
+            emailStatus.style.display = 'block';
+            setTimeout(() => {
+                emailStatus.style.display = 'none';
+            }, 5000);
+        }
+        
+        function mostrarEstadoAutoReport(mensaje) {
+            const statusElement = document.getElementById('auto-report-status');
+            statusElement.textContent = mensaje;
+            statusElement.className = 'status-message info';
+            statusElement.style.display = 'block';
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Función para cargar patentes desde la tabla documentacion
+        async function cargarPatentes() {
+            const supabase = inicializarSupabase();
+            
+            try {
+                const { data: documentacion, error } = await supabase
+                    .from('documentacion')
+                    .select('patente')
+                    .order('patente', { ascending: true });
+                
+                if (error) throw error;
+                
+                // Obtener patentes únicas y ordenadas
+                patentesDisponibles = [...new Set(
+                    documentacion
+                        .filter(doc => doc.patente)
+                        .map(doc => doc.patente)
+                )].sort();
+                
+                // Llenar el select de patentes en el filtro
+                const selectFiltro = document.getElementById('filter-patente');
+                selectFiltro.innerHTML = '<option value="">Todas las patentes</option>';
+                
+                patentesDisponibles.forEach(patente => {
+                    const option = document.createElement('option');
+                    option.value = patente;
+                    option.textContent = patente;
+                    selectFiltro.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error al cargar patentes:', error.message);
+                mostrarError('Error al cargar las patentes disponibles');
+            }
+        }
+
+        // Función para ajustar fecha a zona horaria de Chile sin agregar un día
+        function ajustarFechaChile(dateStr) {
+            if (!dateStr) return null;
+            
+            const date = new Date(dateStr);
+            // Ajustar a UTC-4 (horario estándar de Chile)
+            const offset = date.getTimezoneOffset();
+            date.setMinutes(date.getMinutes() + offset);
+            
+            return date;
+        }
+
+        // Función para calcular días restantes con zona horaria de Chile
+        function calculateDaysRemaining(dateStr) {
+            if (!dateStr) return { days: null, status: 'empty' };
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Ajustar la fecha para zona horaria de Chile
+            const date = ajustarFechaChile(dateStr);
+            date.setHours(0, 0, 0, 0);
+            
+            const diffTime = date - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let status;
+            if (diffDays > 10) {
+                status = 'valid';
+            } else if (diffDays >= 1 && diffDays <= 10) {
+                status = 'pending';
+            } else {
+                status = 'expired';
+            }
+            
+            return { days: diffDays, status: status };
+        }
+
+        // Función para formatear fechas con estado (ajustada para Chile)
+        function formatDateWithStatus(dateStr, daysInfo) {
+            if (!dateStr) return '';
+            
+            // Ajustar la fecha para zona horaria de Chile
+            const date = ajustarFechaChile(dateStr);
+            
+            // Formatear fecha en formato local de Chile
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            const formattedDate = date.toLocaleDateString('es-CL', options);
+            
+            let dateClass = '';
+            if (daysInfo.status === 'expired') {
+                dateClass = 'date-expired';
+            } else if (daysInfo.status === 'pending') {
+                dateClass = 'date-warning';
+            }
+            
+            let daysClass = '';
+            if (daysInfo.status === 'valid') {
+                daysClass = 'days-valid';
+            } else if (daysInfo.status === 'pending') {
+                daysClass = 'days-pending';
+            } else {
+                daysClass = 'days-expired';
+            }
+            
+            return `
+                <div class="date-cell ${dateClass}">${formattedDate}</div>
+                <div class="days-remaining ${daysClass}">${daysInfo.days !== null ? daysInfo.days + ' días' : 'N/A'}</div>
+            `;
+        }
+
+        // Función para cargar documentación desde Supabase con filtros
+        async function cargarDocumentacion(filtros = {}) {
+            const supabase = inicializarSupabase();
+            
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        throw new Error('No se pudo conectar con la base de datos');
+                    }
+                }
+                
+                let query = supabase
+                    .from('documentacion')
+                    .select('*')
+                    .order('id', { ascending: true }); // Ordenar por ID de menor a mayor
+                
+                // Aplicar filtros
+                if (filtros.id) {
+                    query = query.eq('id', filtros.id);
+                }
+                
+                if (filtros.cto) {
+                    query = query.ilike('cto', `%${filtros.cto}%`);
+                }
+                
+                if (filtros.patente) {
+                    query = query.eq('patente', filtros.patente);
+                }
+                
+                const { data: documentacion, error } = await query;
+                
+                if (error) throw error;
+                
+                // Filtrar por estado si es necesario
+                if (filtros.status && filtros.status !== 'all') {
+                    return documentacion.filter(doc => {
+                        const permisoCirculacion = calculateDaysRemaining(doc.fecha_vencimiento_permiso_circulacion);
+                        const seguro = calculateDaysRemaining(doc.seguro_vencimiento);
+                        const revisionTecnica = calculateDaysRemaining(doc.revision_tecnica_vencimiento);
+                        const certificadoOperatividad = calculateDaysRemaining(doc.certificado_operatividad_vencimiento);
+                        const sistemaSupresion = calculateDaysRemaining(doc.sistema_supresion_vencimiento);
+                        const seguroTerceros = calculateDaysRemaining(doc.seguro_terceros_vencimiento);
+                        const decreto80 = calculateDaysRemaining(doc.decreto_80_vencimiento);
+                        
+                        return [
+                            permisoCirculacion.status, 
+                            seguro.status, 
+                            revisionTecnica.status, 
+                            certificadoOperatividad.status,
+                            sistemaSupresion.status,
+                            seguroTerceros.status,
+                            decreto80.status
+                        ].includes(filtros.status);
+                    });
+                }
+                
+                // Filtrar por mes si es necesario
+                if (filtros.month && filtros.month !== 'all') {
+                    const monthNum = parseInt(filtros.month);
+                    return documentacion.filter(doc => {
+                        const camposFecha = [
+                            doc.fecha_vencimiento_permiso_circulacion,
+                            doc.seguro_vencimiento,
+                            doc.revision_tecnica_vencimiento,
+                            doc.certificado_operatividad_vencimiento,
+                            doc.sistema_supresion_vencimiento,
+                            doc.seguro_terceros_vencimiento,
+                            doc.decreto_80_vencimiento
+                        ];
+                        
+                        return camposFecha.some(fecha => {
+                            if (!fecha) return false;
+                            const date = ajustarFechaChile(fecha);
+                            return date.getMonth() + 1 === monthNum;
+                        });
+                    });
+                }
+                
+                return documentacion || [];
+            } catch (error) {
+                console.error('Error al cargar documentación:', error.message);
+                mostrarError('Error al cargar documentación: ' + error.message);
+                return [];
+            }
+        }
+
+        // Función para renderizar documentación en la tabla
+        async function renderizarDocumentacion(filtros = {}) {
+            const tablaBody = document.getElementById('tablaBody');
+            tablaBody.innerHTML = '<tr><td colspan="12">Cargando documentación...</td></tr>';
+            
+            try {
+                const documentacion = await cargarDocumentacion(filtros);
+                tablaBody.innerHTML = '';
+                
+                if (documentacion.length === 0) {
+                    tablaBody.innerHTML = '<tr><td colspan="12">No se encontraron registros con los filtros aplicados</td></tr>';
+                    return;
+                }
+                
+                documentacion.forEach(function(doc) {
+                    // Calcular días restantes para cada documento
+                    const permisoCirculacion = calculateDaysRemaining(doc.fecha_vencimiento_permiso_circulacion);
+                    const seguro = calculateDaysRemaining(doc.seguro_vencimiento);
+                    const revisionTecnica = calculateDaysRemaining(doc.revision_tecnica_vencimiento);
+                    const certificadoOperatividad = calculateDaysRemaining(doc.certificado_operatividad_vencimiento);
+                    const sistemaSupresion = calculateDaysRemaining(doc.sistema_supresion_vencimiento);
+                    const seguroTerceros = calculateDaysRemaining(doc.seguro_terceros_vencimiento);
+                    const decreto80 = calculateDaysRemaining(doc.decreto_80_vencimiento);
+                    
+                    const fila = document.createElement('tr');
+                    
+                    fila.innerHTML = `
+                        <td>${doc.id}</td>
+                        <td>${doc.cto}</td>
+                        <td>${doc.modelo || 'N/A'}</td>
+                        <td>${doc.patente || 'N/A'}</td>
+                        <td>${formatDateWithStatus(doc.fecha_vencimiento_permiso_circulacion, permisoCirculacion)}</td>
+                        <td>${formatDateWithStatus(doc.seguro_vencimiento, seguro)}</td>
+                        <td>${formatDateWithStatus(doc.revision_tecnica_vencimiento, revisionTecnica)}</td>
+                        <td>${formatDateWithStatus(doc.certificado_operatividad_vencimiento, certificadoOperatividad)}</td>
+                        <td>${formatDateWithStatus(doc.sistema_supresion_vencimiento, sistemaSupresion)}</td>
+                        <td>${formatDateWithStatus(doc.seguro_terceros_vencimiento, seguroTerceros)}</td>
+                        <td>${formatDateWithStatus(doc.decreto_80_vencimiento, decreto80)}</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-sm btn-warning" onclick="editarDocumentacion('${doc.id}')">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarDocumentacion('${doc.id}')">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </td>
+                    `;
+                    tablaBody.appendChild(fila);
+                });
+                
+                // Actualizar la lista de patentes disponibles
+                cargarPatentes();
+                
+                // Actualizar calendario si existe
+                if (calendar) {
+                    actualizarCalendario();
+                }
+            } catch (error) {
+                tablaBody.innerHTML = '<tr><td colspan="12">Error al cargar documentación</td></tr>';
+                mostrarError('Error al cargar documentación: ' + error.message);
+            }
+        }
+
+        // Función para obtener la hora actual en Chile continental
+        function getChileTime() {
+            const now = new Date();
+            // Chile continental está en UTC-4 (estándar) o UTC-3 (horario de verano)
+            // Para simplicidad, usamos la hora local del navegador asumiendo que está configurado para Chile
+            return now.toLocaleTimeString('es-CL', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                timeZone: 'America/Santiago'
+            });
+        }
+
+        // Función para cargar datos de un documento para edición
+        async function editarDocumentacion(id) {
+            const supabase = inicializarSupabase();
+            
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        mostrarError('No se pudo conectar con la base de datos');
+                        return;
+                    }
+                }
+                
+                const { data: doc, error } = await supabase
+                    .from('documentacion')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                
+                // Llenar el formulario
+                document.getElementById('documentacion-id').value = doc.id;
+                document.getElementById('cto').value = doc.cto || '';
+                document.getElementById('modelo').value = doc.modelo || '';
+                document.getElementById('patente').value = doc.patente || '';
+                
+                // Función para formatear fecha para input type="date" con zona horaria de Chile
+                function formatDateForInput(dateStr) {
+                    if (!dateStr) return '';
+                    try {
+                        const date = ajustarFechaChile(dateStr);
+                        return date.toISOString().split('T')[0];
+                    } catch (e) {
+                        console.error('Error formateando fecha:', dateStr, e);
+                        return '';
+                    }
+                }
+                
+                document.getElementById('fecha_vencimiento_permiso_circulacion').value = formatDateForInput(doc.fecha_vencimiento_permiso_circulacion);
+                document.getElementById('seguro_vencimiento').value = formatDateForInput(doc.seguro_vencimiento);
+                document.getElementById('revision_tecnica_vencimiento').value = formatDateForInput(doc.revision_tecnica_vencimiento);
+                document.getElementById('certificado_operatividad_vencimiento').value = formatDateForInput(doc.certificado_operatividad_vencimiento);
+                document.getElementById('sistema_supresion_vencimiento').value = formatDateForInput(doc.sistema_supresion_vencimiento);
+                document.getElementById('seguro_terceros_vencimiento').value = formatDateForInput(doc.seguro_terceros_vencimiento);
+                document.getElementById('decreto_80_vencimiento').value = formatDateForInput(doc.decreto_80_vencimiento);
+                
+                // Cambiar a modo edición
+                modoEdicion = true;
+                document.getElementById('btn-cancelar').style.display = 'inline-block';
+                document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-save"></i> Actualizar Documentación';
+                
+                // Cambiar a pestaña de ingreso
+                cambiarPestana('ingreso');
+                
+            } catch (error) {
+                console.error('Error al cargar documentación para edición:', error.message);
+                mostrarError('Error al cargar documentación para edición: ' + error.message);
+            }
+        }
+
+        // Función para guardar o actualizar documentación
+        async function guardarDocumentacion(event) {
+            event.preventDefault();
+            
+            const cto = document.getElementById('cto').value.trim();
+            
+            // Validación básica
+            if (!cto) {
+                mostrarError('El campo CTO es obligatorio');
+                return;
+            }
+            
+            const docData = {
+                cto: cto,
+                modelo: document.getElementById('modelo').value.trim() || null,
+                patente: document.getElementById('patente').value.trim() || null,
+                fecha_vencimiento_permiso_circulacion: document.getElementById('fecha_vencimiento_permiso_circulacion').value || null,
+                seguro_vencimiento: document.getElementById('seguro_vencimiento').value || null,
+                revision_tecnica_vencimiento: document.getElementById('revision_tecnica_vencimiento').value || null,
+                certificado_operatividad_vencimiento: document.getElementById('certificado_operatividad_vencimiento').value || null,
+                sistema_supresion_vencimiento: document.getElementById('sistema_supresion_vencimiento').value || null,
+                seguro_terceros_vencimiento: document.getElementById('seguro_terceros_vencimiento').value || null,
+                decreto_80_vencimiento: document.getElementById('decreto_80_vencimiento').value || null
+            };
+            
+            const supabase = inicializarSupabase();
+            
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        mostrarError('No se pudo conectar con la base de datos');
+                        return;
+                    }
+                }
+                
+                if (modoEdicion) {
+                    // Actualizar documentación existente
+                    const id = document.getElementById('documentacion-id').value;
+                    const { error } = await supabase
+                        .from('documentacion')
+                        .update(docData)
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                    
+                    mostrarExito('Documentación actualizada correctamente');
+                } else {
+                    // Crear nueva documentación
+                    const { error } = await supabase
+                        .from('documentacion')
+                        .insert([docData]);
+                    
+                    if (error) throw error;
+                    
+                    mostrarExito('Documentación creada correctamente');
+                }
+                
+                // Limpiar formulario y recargar listado
+                limpiarFormulario();
+                renderizarDocumentacion();
+                cambiarPestana('listado');
+                
+            } catch (error) {
+                console.error('Error al guardar documentación:', error.message);
+                mostrarError('Error al guardar documentación: ' + error.message);
+            }
+        }
+
+        // Función para eliminar documentación
+        async function eliminarDocumentacion(id) {
+            if (!confirm('¿Está seguro que desea eliminar esta documentación?\nEsta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            const supabase = inicializarSupabase();
+            
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        mostrarError('No se pudo conectar con la base de datos');
+                        return;
+                    }
+                }
+                
+                const { error } = await supabase
+                    .from('documentacion')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                mostrarExito('Documentación eliminada correctamente');
+                renderizarDocumentacion();
+            } catch (error) {
+                console.error('Error al eliminar documentación:', error.message);
+                mostrarError('Error al eliminar la documentación: ' + error.message);
+            }
+        }
+
+        // Función para limpiar el formulario
+        function limpiarFormulario() {
+            document.getElementById('form-documentacion').reset();
+            document.getElementById('documentacion-id').value = '';
+            modoEdicion = false;
+            document.getElementById('btn-cancelar').style.display = 'none';
+            document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-save"></i> Guardar Documentación';
+        }
+
+        // Función para cambiar entre pestañas
+        function cambiarPestana(pestanaId) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(pestanaId).classList.add('active');
+            
+            // Actualizar estado de los botones de pestaña
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelector(`.tab[data-tab="${pestanaId}"]`).classList.add('active');
+            
+            // Si es la pestaña de calendario, actualizarlo
+            if (pestanaId === 'calendario' && calendar) {
+                calendar.render();
+            }
+            
+            // Si es la pestaña de reportes automáticos, cargar los próximos vencimientos
+            if (pestanaId === 'automatico') {
+                cargarProximosVencimientos();
+            }
+        }
+
+        // Función para aplicar filtros
+        function aplicarFiltros() {
+            const filtros = {
+                id: document.getElementById('filter-id').value.trim(),
+                cto: document.getElementById('filter-cto').value.trim(),
+                patente: document.getElementById('filter-patente').value,
+                status: document.getElementById('filter-status').value,
+                month: document.getElementById('filter-month').value
+            };
+            
+            renderizarDocumentacion(filtros);
+        }
+
+        // Función para limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('filter-id').value = '';
+            document.getElementById('filter-cto').value = '';
+            document.getElementById('filter-patente').value = '';
+            document.getElementById('filter-status').value = 'all';
+            document.getElementById('filter-month').value = 'all';
+            renderizarDocumentacion();
+        }
+
+        // Función para inicializar el calendario
+        function inicializarCalendario() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'es-chile',
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    list: 'Lista'
+                },
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                events: async function(fetchInfo, successCallback, failureCallback) {
+                    const supabase = inicializarSupabase();
+                    
+                    try {
+                        const { data: documentacion, error } = await supabase
+                            .from('documentacion')
+                            .select('*');
+                        
+                        if (error) throw error;
+                        
+                        const eventos = [];
+                        
+                        documentacion.forEach(doc => {
+                            // Agregar eventos para cada fecha de vencimiento
+                            const camposFecha = [
+                                { campo: 'fecha_vencimiento_permiso_circulacion', titulo: 'Permiso Circulación' },
+                                { campo: 'seguro_vencimiento', titulo: 'Seguro' },
+                                { campo: 'revision_tecnica_vencimiento', titulo: 'Revisión Técnica' },
+                                { campo: 'certificado_operatividad_vencimiento', titulo: 'Cert. Operatividad' },
+                                { campo: 'sistema_supresion_vencimiento', titulo: 'Sistema Supresión' },
+                                { campo: 'seguro_terceros_vencimiento', titulo: 'Seguro Terceros' },
+                                { campo: 'decreto_80_vencimiento', titulo: 'Decreto 80' }
+                            ];
+                            
+                            camposFecha.forEach(({ campo, titulo }) => {
+                                if (doc[campo]) {
+                                    const fecha = ajustarFechaChile(doc[campo]);
+                                    const daysInfo = calculateDaysRemaining(doc[campo]);
+                                    
+                                    let className;
+                                    if (daysInfo.status === 'expired') {
+                                        className = 'fc-event-expired';
+                                    } else if (daysInfo.status === 'pending') {
+                                        className = 'fc-event-pending';
+                                    } else {
+                                        className = 'fc-event-valid';
+                                    }
+                                    
+                                    eventos.push({
+                                        title: `${titulo} - ${doc.cto} ${doc.patente ? '(' + doc.patente + ')' : ''}`,
+                                        start: fecha,
+                                        allDay: true,
+                                        className: className,
+                                        extendedProps: {
+                                            docId: doc.id,
+                                            tipo: titulo,
+                                            estado: daysInfo.status,
+                                            diasRestantes: daysInfo.days
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                        
+                        successCallback(eventos);
+                    } catch (error) {
+                        console.error('Error al cargar eventos para calendario:', error);
+                        failureCallback(error);
+                    }
+                },
+                eventClick: function(info) {
+                    const docId = info.event.extendedProps.docId;
+                    if (docId) {
+                        editarDocumentacion(docId);
+                    }
+                },
+                eventDidMount: function(info) {
+                    // Agregar tooltip con más información
+                    const tooltip = `${info.event.title}\nEstado: ${info.event.extendedProps.estado}\nDías restantes: ${info.event.extendedProps.diasRestantes || 'N/A'}`;
+                    info.el.setAttribute('title', tooltip);
+                }
+            });
+            
+            calendar.render();
+        }
+
+        // Función para actualizar el calendario
+        function actualizarCalendario() {
+            if (calendar) {
+                calendar.refetchEvents();
+            }
+        }
+
+        // Función para obtener vencimientos en el mes y año seleccionado
+        async function obtenerProximosVencimientos() {
+            const supabase = inicializarSupabase();
+            
+            try {
+                const { data: documentacion, error } = await supabase
+                    .from('documentacion')
+                    .select('*');
+                
+                if (error) throw error;
+                
+                const vencimientos = [];
+                const mesSeleccionado = parseInt(document.getElementById('report-month').value);
+                const añoSeleccionado = parseInt(document.getElementById('report-year').value);
+                
+                documentacion.forEach(doc => {
+                    const camposFecha = [
+                        { campo: 'fecha_vencimiento_permiso_circulacion', tipo: 'Permiso Circulación' },
+                        { campo: 'seguro_vencimiento', tipo: 'Seguro' },
+                        { campo: 'revision_tecnica_vencimiento', tipo: 'Revisión Técnica' },
+                        { campo: 'certificado_operatividad_vencimiento', tipo: 'Cert. Operatividad' },
+                        { campo: 'sistema_supresion_vencimiento', tipo: 'Sistema Supresión' },
+                        { campo: 'seguro_terceros_vencimiento', tipo: 'Seguro Terceros' },
+                        { campo: 'decreto_80_vencimiento', tipo: 'Decreto 80' }
+                    ];
+                    
+                    camposFecha.forEach(({ campo, tipo }) => {
+                        if (doc[campo]) {
+                            const fechaVencimiento = ajustarFechaChile(doc[campo]);
+                            fechaVencimiento.setHours(0, 0, 0, 0);
+                            
+                            // Verificar si la fecha está en el mes y año seleccionado
+                            if (fechaVencimiento.getMonth() + 1 === mesSeleccionado && 
+                                fechaVencimiento.getFullYear() === añoSeleccionado) {
+                                const daysInfo = calculateDaysRemaining(doc[campo]);
+                                vencimientos.push({
+                                    id: doc.id,
+                                    patente: doc.patente || 'N/A',
+                                    tipo: tipo,
+                                    fechaVencimiento: doc[campo],
+                                    diasRestantes: daysInfo.days
+                                });
+                            }
+                        }
+                    });
+                });
+                
+                // Ordenar por fecha de vencimiento (más próximo primero)
+                vencimientos.sort((a, b) => {
+                    return new Date(a.fechaVencimiento) - new Date(b.fechaVencimiento);
+                });
+                
+                return vencimientos;
+                
+            } catch (error) {
+                console.error('Error al obtener próximos vencimientos:', error);
+                return [];
+            }
+        }
+
+        // Función para cargar próximos vencimientos en la pestaña de reportes automáticos
+        async function cargarProximosVencimientos() {
+            const tablaBody = document.getElementById('next-expirations-body');
+            tablaBody.innerHTML = '<tr><td colspan="5">Cargando próximos vencimientos...</td></tr>';
+            
+            try {
+                const vencimientos = await obtenerProximosVencimientos();
+                tablaBody.innerHTML = '';
+                
+                if (vencimientos.length === 0) {
+                    const mesSeleccionado = document.getElementById('report-month').options[document.getElementById('report-month').selectedIndex].text;
+                    const añoSeleccionado = document.getElementById('report-year').value;
+                    tablaBody.innerHTML = `<tr><td colspan="5">No hay documentos que vencerán en ${mesSeleccionado} ${añoSeleccionado}</td></tr>`;
+                    return;
+                }
+                
+                vencimientos.forEach(vencimiento => {
+                    const fecha = ajustarFechaChile(vencimiento.fechaVencimiento);
+                    const fechaFormateada = fecha.toLocaleDateString('es-CL');
+                    
+                    const fila = document.createElement('tr');
+                    
+                    fila.innerHTML = `
+                        <td>${vencimiento.id}</td>
+                        <td>${vencimiento.patente}</td>
+                        <td>${vencimiento.tipo}</td>
+                        <td>${fechaFormateada}</td>
+                        <td>${vencimiento.diasRestantes} días</td>
+                    `;
+                    tablaBody.appendChild(fila);
+                });
+            } catch (error) {
+                tablaBody.innerHTML = '<tr><td colspan="5">Error al cargar próximos vencimientos</td></tr>';
+            }
+        }
+
+        // Función para enviar reporte automático de vencimientos
+        async function enviarReporteAutomatico() {
+            try {
+                // Obtener los vencimientos
+                const vencimientos = await obtenerProximosVencimientos();
+                const mesSeleccionado = document.getElementById('report-month').options[document.getElementById('report-month').selectedIndex].text;
+                const añoSeleccionado = document.getElementById('report-year').value;
+                
+                if (vencimientos.length === 0) {
+                    console.log('No hay documentos que vencerán en el mes y año seleccionado');
+                    return true; // Considerar como éxito, no hay nada para enviar
+                }
+                
+                // Construir mensaje HTML
+                let mensajeHTML = `
+                    <h2 style="color: #3f72af;">📅 Reporte Automático de Vencimientos - HGT Tour 📅</h2>
+                    <p>Documentos que vencerán en <strong>${mesSeleccionado} ${añoSeleccionado}</strong>:</p>
+                    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background-color: #f5f5f5;">
+                                <th>ID</th>
+                                <th>Patente</th>
+                                <th>Tipo Documento</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Días Restantes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                vencimientos.forEach(vencimiento => {
+                    const fecha = ajustarFechaChile(vencimiento.fechaVencimiento);
+                    const fechaFormateada = fecha.toLocaleDateString('es-CL');
+                    
+                    let statusClass = '';
+                    if (vencimiento.diasRestantes <= 0) {
+                        statusClass = 'color: #e74c3c; font-weight: bold;';
+                    } else if (vencimiento.diasRestantes <= 10) {
+                        statusClass = 'color: #f39c12; font-weight: bold;';
+                    } else {
+                        statusClass = 'color: #2ecc71;';
+                    }
+                    
+                    mensajeHTML += `
+                        <tr>
+                            <td>${vencimiento.id}</td>
+                            <td>${vencimiento.patente}</td>
+                            <td>${vencimiento.tipo}</td>
+                            <td>${fechaFormateada}</td>
+                            <td style="${statusClass}">${vencimiento.diasRestantes} días</td>
+                        </tr>
+                    `;
+                });
+                
+                mensajeHTML += `
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 20px; font-weight: bold;">Por favor tomar las medidas necesarias para su renovación.</p>
+                    <p>Este es un mensaje automático generado el ${new Date().toLocaleDateString('es-CL')} a las ${new Date().toLocaleTimeString('es-CL')}.</p>
+                `;
+                
+                // Datos para el correo electrónico
+                const emailDestino = document.getElementById('report-email').value;
+                const templateParams = {
+                    to_email: emailDestino,
+                    to_name: 'Administrador HGT Tour',
+                    from_name: 'Sistema de Documentación HGT Tour',
+                    subject: `Reporte Automático de Vencimientos - ${mesSeleccionado} ${añoSeleccionado}`,
+                    message: mensajeHTML
+                };
+                
+                // Enviar correo electrónico usando EmailJS
+                const response = await emailjs.send('service_bblaxom', 'template_4aprfmr', templateParams);
+                console.log('Reporte automático enviado:', response);
+                
+                // Actualizar registro de envíos
+                const now = new Date();
+                const envioInfo = {
+                    fecha: now.toISOString(),
+                    exitoso: true,
+                    cantidad: vencimientos.length,
+                    mes: mesSeleccionado,
+                    año: añoSeleccionado
+                };
+                
+                lastRuns.unshift(envioInfo);
+                if (lastRuns.length > 5) lastRuns.pop();
+                
+                actualizarUltimosEnvios();
+                
+                return true;
+            } catch (error) {
+                console.error('Error al enviar reporte automático:', error);
+                
+                // Registrar envío fallido
+                const now = new Date();
+                const envioInfo = {
+                    fecha: now.toISOString(),
+                    exitoso: false,
+                    error: error.text || error.message
+                };
+                
+                lastRuns.unshift(envioInfo);
+                if (lastRuns.length > 5) lastRuns.pop();
+                
+                actualizarUltimosEnvios();
+                
+                return false;
+            }
+        }
+
+        // Función para actualizar la lista de últimos envíos
+        function actualizarUltimosEnvios() {
+            const container = document.getElementById('last-runs-container');
+            container.innerHTML = '';
+            
+            if (lastRuns.length === 0) {
+                container.innerHTML = '<div class="alert alert-secondary">No hay registros de envíos</div>';
+                return;
+            }
+            
+            lastRuns.forEach(envio => {
+                const fecha = new Date(envio.fecha);
+                const fechaFormateada = fecha.toLocaleString('es-CL');
+                
+                const card = document.createElement('div');
+                card.className = envio.exitoso ? 'alert alert-success' : 'alert alert-danger';
+                card.innerHTML = `
+                    <div><strong>${fechaFormateada}</strong> - 
+                    ${envio.exitoso ? 
+                        `<span class="badge bg-success">Éxito</span> (${envio.cantidad} documentos en ${envio.mes || 'mes seleccionado'} ${envio.año || ''})` : 
+                        `<span class="badge bg-danger">Error</span> ${envio.error || ''}`}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Función para configurar el reporte automático
+        function configurarReporteAutomatico() {
+            // Detener cualquier intervalo existente
+            if (autoReportInterval) {
+                clearInterval(autoReportInterval);
+            }
+            
+            // Obtener la hora seleccionada por el usuario
+            const timeInput = document.getElementById('report-time').value;
+            if (timeInput) {
+                const [hourStr, minuteStr] = timeInput.split(':');
+                reportHour = parseInt(hourStr, 10);
+                reportMinute = parseInt(minuteStr, 10);
+                
+                // Guardar en localStorage
+                localStorage.setItem('reportTime', timeInput);
+            }
+            
+            // Obtener el mes seleccionado
+            reportMonth = parseInt(document.getElementById('report-month').value);
+            
+            // Obtener el año seleccionado
+            reportYear = parseInt(document.getElementById('report-year').value);
+            
+            // Función para verificar si es la hora de enviar
+            function verificarHoraEnvio() {
+                const ahora = new Date();
+                const horasAhora = ahora.getHours();
+                const minutosAhora = ahora.getMinutes();
+                
+                // Actualizar la hora de Chile en la interfaz
+                document.getElementById('chile-time').textContent = getChileTime();
+                
+                // Verificar si es la hora exacta configurada
+                if (horasAhora === reportHour && minutosAhora === reportMinute) {
+                    // Verificar que no se haya enviado hoy
+                    const hoy = new Date().toDateString();
+                    if (!lastReportSent || new Date(lastReportSent).toDateString() !== hoy) {
+                        enviarReporteAutomatico().then(exitoso => {
+                            if (exitoso) {
+                                lastReportSent = new Date();
+                                mostrarEstadoAutoReport('Reporte automático enviado con éxito');
+                            } else {
+                                mostrarEstadoAutoReport('Error al enviar reporte automático');
+                            }
+                        });
+                    }
+                }
+                
+                // Calcular la próxima hora de envío
+                const nextRun = new Date();
+                nextRun.setHours(reportHour, reportMinute, 0, 0);
+                
+                // Si ya pasó la hora de hoy, programar para mañana
+                if (nextRun < ahora) {
+                    nextRun.setDate(nextRun.getDate() + 1);
+                }
+                
+                // Formatear la próxima hora de envío
+                const options = { hour: '2-digit', minute: '2-digit' };
+                const nextRunStr = nextRun.toLocaleTimeString('es-CL', options);
+                
+                // Determinar si es hoy o mañana
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const mañana = new Date(hoy);
+                mañana.setDate(mañana.getDate() + 1);
+                
+                let diaTexto = "Hoy";
+                if (nextRun.getDate() === mañana.getDate()) {
+                    diaTexto = "Mañana";
+                }
+                
+                document.getElementById('next-run-time').textContent = `${diaTexto} a las ${nextRunStr}`;
+            }
+            
+            // Ejecutar inmediatamente y luego cada minuto
+            verificarHoraEnvio();
+            autoReportInterval = setInterval(verificarHoraEnvio, 60000); // 60 segundos
+        }
+
+        // Función para activar el reporte automático
+        function activarReporteAutomatico() {
+            autoReportActive = true;
+            configurarReporteAutomatico();
+            
+            document.getElementById('auto-report-status-indicator').className = 'status-indicator status-active';
+            document.getElementById('auto-report-status-text').textContent = 'Activo';
+            document.getElementById('auto-report-status-text').style.color = 'var(--color-success)';
+            
+            mostrarEstadoAutoReport('Reporte automático activado');
+        }
+
+        // Función para desactivar el reporte automático
+        function desactivarReporteAutomatico() {
+            autoReportActive = false;
+            
+            if (autoReportInterval) {
+                clearInterval(autoReportInterval);
+                autoReportInterval = null;
+            }
+            
+            document.getElementById('auto-report-status-indicator').className = 'status-indicator status-inactive';
+            document.getElementById('auto-report-status-text').textContent = 'Inactivo';
+            document.getElementById('auto-report-status-text').style.color = 'var(--color-error)';
+            document.getElementById('next-run-time').textContent = '--:--';
+            
+            mostrarEstadoAutoReport('Reporte automático desactivado');
+        }
+
+        // Función para generar opciones de años (2023 a 2030)
+        function generarOpcionesAnios() {
+            const selectAnio = document.getElementById('report-year');
+            const anioActual = new Date().getFullYear();
+            
+            // Limpiar opciones existentes
+            selectAnio.innerHTML = '';
+            
+            // Generar opciones fijas desde 2023 a 2030
+            for (let anio = 2023; anio <= 2030; anio++) {
+                const option = document.createElement('option');
+                option.value = anio;
+                option.textContent = anio;
+                selectAnio.appendChild(option);
+            }
+            
+            // Establecer año actual como seleccionado por defecto si está en el rango
+            if (anioActual >= 2023 && anioActual <= 2030) {
+                selectAnio.value = anioActual;
+                reportYear = anioActual;
+            } else {
+                // Si el año actual está fuera del rango, seleccionar el último año disponible
+                selectAnio.value = "2030";
+                reportYear = 2030;
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generar opciones de años
+            generarOpcionesAnios();
+            
+            // Configurar event listeners
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    cambiarPestana(this.dataset.tab);
+                });
+            });
+            
+            document.getElementById('form-documentacion').addEventListener('submit', guardarDocumentacion);
+            document.getElementById('btn-cancelar').addEventListener('click', function() {
+                limpiarFormulario();
+                cambiarPestana('listado');
+            });
+            
+            document.getElementById('btn-buscar').addEventListener('click', aplicarFiltros);
+            document.getElementById('btn-limpiar').addEventListener('click', limpiarFiltros);
+            
+            // Botón para enviar reporte manualmente
+            document.getElementById('btn-enviar-email').addEventListener('click', function() {
+                enviarReporteAutomatico().then(exitoso => {
+                    if (exitoso) {
+                        mostrarEstadoEmail('Reporte enviado correctamente');
+                    } else {
+                        mostrarEstadoEmail('Error al enviar reporte', false);
+                    }
+                });
+            });
+            
+            // Botones de reportes automáticos
+            document.getElementById('btn-activar-reporte').addEventListener('click', activarReporteAutomatico);
+            document.getElementById('btn-desactivar-reporte').addEventListener('click', desactivarReporteAutomatico);
+            document.getElementById('btn-test-reporte').addEventListener('click', function() {
+                enviarReporteAutomatico().then(exitoso => {
+                    if (exitoso) {
+                        mostrarEstadoAutoReport('Reporte de prueba enviado con éxito');
+                    } else {
+                        mostrarEstadoAutoReport('Error al enviar reporte de prueba');
+                    }
+                });
+            });
+
+            // Evento para actualizar la vista cuando cambia el mes o año seleccionado
+            document.getElementById('report-month').addEventListener('change', function() {
+                reportMonth = parseInt(this.value);
+                cargarProximosVencimientos();
+            });
+            
+            document.getElementById('report-year').addEventListener('change', function() {
+                reportYear = parseInt(this.value);
+                cargarProximosVencimientos();
+            });
+            
+            // Cargar la hora guardada si existe
+            const savedTime = localStorage.getItem('reportTime');
+            if (savedTime) {
+                document.getElementById('report-time').value = savedTime;
+                const [hourStr, minuteStr] = savedTime.split(':');
+                reportHour = parseInt(hourStr, 10);
+                reportMinute = parseInt(minuteStr, 10);
+            }
+            
+            // Establecer el mes actual por defecto
+            const currentMonth = new Date().getMonth() + 1;
+            document.getElementById('report-month').value = currentMonth;
+            reportMonth = currentMonth;
+            
+            // Verificar conexión y cargar datos iniciales
+            checkSupabaseConnection().then(() => {
+                if (isConnected) {
+                    cargarPatentes().then(() => {
+                        renderizarDocumentacion();
+                        inicializarCalendario();
+                        cargarProximosVencimientos();
+                        
+                        // Activar reporte automático por defecto
+                        activarReporteAutomatico();
+                    });
+                }
+            });
+            
+            // Verificar permisos de usuario
+            const tipoUsuario = sessionStorage.getItem('tipoUsuario');
+            
+            if (tipoUsuario === 'lectura') {
+                // 1. Modificar el título para indicar modo lectura
+                const titulo = document.querySelector('h1');
+                titulo.textContent += ' (Modo Lectura)';
+                
+                // 2. Ocultar pestaña de ingreso (formulario)
+                document.querySelector('.tab[data-tab="ingreso"]').style.display = 'none';
+                
+                // 3. Deshabilitar botones de acción
+                const acciones = [
+                    'Guardar Documentación', 
+                    'Editar', 
+                    'Eliminar',
+                    'Enviar Reporte',
+                    'Activar Reporte Automático',
+                    'Desactivar',
+                    'Probar Ahora'
+                ];
+                
+                document.querySelectorAll('.btn').forEach(boton => {
+                    if (acciones.some(accion => boton.textContent.includes(accion))) {
+                        boton.disabled = true;
+                        boton.style.opacity = '0.6';
+                        boton.style.cursor = 'not-allowed';
+                        boton.style.background = '#cccccc';
+                        boton.style.color = '#666666';
+                        boton.title = 'No tienes permisos para esta acción';
+                        boton.onclick = null;
+                    }
+                });
+
+                // 4. Deshabilitar campos de filtro
+                document.querySelectorAll('.filter-control').forEach(input => {
+                    input.disabled = true;
+                    input.style.backgroundColor = '#f5f5f5';
+                });
+
+                // 5. Mostrar mensaje informativo
+                const mensajeInfo = document.createElement('div');
+                mensajeInfo.className = 'status-message';
+                mensajeInfo.style.backgroundColor = '#e3f2fd';
+                mensajeInfo.style.color = '#1976d2';
+                mensajeInfo.style.borderLeft = '4px solid #1976d2';
+                mensajeInfo.textContent = 'Estás en modo de solo lectura. No puedes realizar modificaciones.';
+                document.querySelector('.container').insertBefore(mensajeInfo, document.querySelector('.tabs'));
+            }
+        });
+
+        // Sobrescribir funciones críticas para usuarios de solo lectura
+        const funcionesProtegidas = [
+            'guardarDocumentacion',
+            'editarDocumentacion', 
+            'eliminarDocumentacion',
+            'aplicarFiltros',
+            'limpiarFiltros',
+            'enviarReporteAutomatico',
+            'activarReporteAutomatico',
+            'desactivarReporteAutomatico'
+        ];
+
+        funcionesProtegidas.forEach(funcion => {
+            const original = window[funcion];
+            if (original) {
+                window[funcion] = async function(...args) {
+                    const tipoUsuario = sessionStorage.getItem('tipoUsuario');
+                    if (tipoUsuario === 'lectura') {
+                        alert(`No tienes permisos para ${funcion.replace(/([A-Z])/g, ' $1').toLowerCase()}. Modo de solo lectura.`);
+                        return;
+                    }
+                    return original.apply(this, args);
+                };
+            }
+        });
+    </script>
+</body>
+</html>

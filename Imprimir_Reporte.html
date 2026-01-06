@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generar Reporte de Mantenimientos en TXT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 5px;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+      position: relative;
+    }
+    
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-right: 20px;
+    }
+    
+    .title {
+      flex-grow: 1;
+    }
+    
+    h1 {
+      margin: 0;
+      color: #333;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .fecha-emision {
+      text-align: right;
+      color: #666;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+    
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .stat-card {
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      text-align: center;
+      min-width: 150px;
+      margin: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #3f72af;
+      margin: 5px 0;
+    }
+    
+    .stat-label {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    
+    .chart-container {
+      margin: 30px 0;
+      text-align: center;
+    }
+    
+    .chart-wrapper {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #3f72af;
+      color: white;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    
+    .print-btn-container {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    
+    .btn-print {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: #3f72af;
+      color: white;
+      transition: background-color 0.3s;
+      margin-left: 10px;
+    }
+    
+    .btn-print:hover {
+      background-color: #2c5282;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="img/logo.png" alt="Logo" class="logo">
+      <div class="title">
+        <h1 id="page-title">Reporte de Mantenimientos Preventivos</h1>
+        <div class="subtitle">Sistema de Gestión de Mantenimientos</div>
+      </div>
+      <div class="print-btn-container">
+        <button class="btn-print" onclick="generateTXT()">
+          <i class="fas fa-file-alt"></i> Generar TXT
+        </button>
+      </div>
+    </div>
+
+    <div class="fecha-emision" id="fecha-emision"></div>
+    
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-label">Mantenimientos Totales</div>
+        <div class="stat-value" id="total-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Realizados</div>
+        <div class="stat-value" id="completed-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pendientes</div>
+        <div class="stat-value" id="pending-count">0</div>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <h2>Distribución de Mantenimientos</h2>
+      <div class="chart-wrapper">
+        <canvas id="stats-chart" height="300"></canvas>
+      </div>
+    </div>
+    
+    <h2>Listado de Mantenimientos</h2>
+    <table id="mantenimientos-table">
+      <thead>
+        <tr>
+          <th>OT</th>
+          <th>Patente</th>
+          <th>Fecha</th>
+          <th>Kilometraje</th>
+          <th>Tipo</th>
+          <th>Responsable</th>
+          <th>Realizado</th>
+          <th>Descripción</th>
+          <th>Insumos</th>
+        </tr>
+      </thead>
+      <tbody id="mantenimientos-body">
+        <!-- Datos se cargarán aquí -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+  <script>
+    // Datos de ejemplo (para pruebas si no vienen por URL)
+    const defaultData = [
+      {
+        id: "OT-001",
+        patente: "ABC123",
+        fecha: "2023-05-15",
+        kilometraje: 15000,
+        tipo_mantenimiento: "Preventivo",
+        responsable: "Juan Pérez",
+        realizado: true,
+        descripcion: "Cambio de aceite y filtros",
+        insumos: [
+          {descripcion: "Aceite sintético", cantidad: 1},
+          {descripcion: "Filtro de aceite", cantidad: 1}
+        ]
+      },
+      {
+        id: "OT-002",
+        patente: "XYZ789",
+        fecha: "2023-06-20",
+        kilometraje: 25000,
+        tipo_mantenimiento: "Correctivo",
+        responsable: "María Gómez",
+        realizado: false,
+        descripcion: "Reparación de frenos",
+        insumos: [
+          {descripcion: "Pastillas de freno", cantidad: 4},
+          {descripcion: "Líquido de frenos", cantidad: 1}
+        ]
+      }
+    ];
+
+    // Obtener parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Configurar título de la página
+    document.getElementById('page-title').textContent = urlParams.get('title') || 'Reporte de Mantenimientos';
+    
+    // Mostrar fecha de emisión
+    function formatFechaEmision() {
+      const fecha = new Date();
+      const dia = String(fecha.getDate()).padStart(2, '0');
+      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+      const año = fecha.getFullYear();
+      const horas = String(fecha.getHours()).padStart(2, '0');
+      const minutos = String(fecha.getMinutes()).padStart(2, '0');
+      
+      return `Documento generado el ${dia}-${mes}-${año} a las ${horas}:${minutos}`;
+    }
+    
+    document.getElementById('fecha-emision').textContent = formatFechaEmision();
+    
+    // Función para decodificar datos de URL
+    function getDataFromURL() {
+      try {
+        const dataParam = urlParams.get('data');
+        if (!dataParam) return defaultData;
+        
+        // Primero decodificamos URI y luego parseamos JSON
+        const decodedData = decodeURIComponent(dataParam);
+        return JSON.parse(decodedData);
+      } catch (e) {
+        console.error("Error al parsear datos:", e);
+        return defaultData;
+      }
+    }
+    
+    // Cargar datos
+    const mantenimientos = getDataFromURL();
+    const total = mantenimientos.length;
+    const completados = mantenimientos.filter(m => m.realizado).length;
+    const pendientes = total - completados;
+    
+    // Mostrar estadísticas
+    document.getElementById('total-count').textContent = total;
+    document.getElementById('completed-count').textContent = completados;
+    document.getElementById('pending-count').textContent = pendientes;
+    
+    // Mostrar mantenimientos en la tabla
+    const tbody = document.getElementById('mantenimientos-body');
+    tbody.innerHTML = '';
+    
+    if (mantenimientos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No hay mantenimientos para mostrar</td></tr>';
+    } else {
+      mantenimientos.forEach(m => {
+        const descripcion = m.descripcion || 'Sin descripción';
+        const insumos = m.insumos ? 
+          m.insumos.map(i => `${i.descripcion} (${i.cantidad})`).join(', ') : 
+          'Sin insumos';
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${m.id}</td>
+          <td>${m.patente || ''}</td>
+          <td>${formatDate(m.fecha)}</td>
+          <td>${m.kilometraje ? m.kilometraje.toLocaleString() : '0'}</td>
+          <td>${m.tipo_mantenimiento || ''}</td>
+          <td>${m.responsable || ''}</td>
+          <td>${m.realizado ? 'Sí' : 'No'}</td>
+          <td>${descripcion}</td>
+          <td>${insumos}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    
+    // Configurar gráfico
+    const ctx = document.getElementById('stats-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Realizados', 'Pendientes'],
+        datasets: [{
+          data: [completados, pendientes],
+          backgroundColor: [
+            'rgba(46, 204, 113, 0.8)',
+            'rgba(231, 76, 60, 0.8)'
+          ],
+          borderColor: [
+            'rgba(46, 204, 113, 1)',
+            'rgba(231, 76, 60, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Función para formatear fecha
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      
+      return `${day}-${month}-${year}`;
+    }
+    
+    // Función para generar el archivo TXT
+    function generateTXT() {
+      try {
+        let txtContent = `REPORTE DE MANTENIMIENTOS PREVENTIVOS\n`;
+        txtContent += `Sistema de Gestión de Mantenimientos\n\n`;
+        txtContent += `${document.getElementById('fecha-emision').textContent}\n\n`;
+        
+        txtContent += `ESTADÍSTICAS:\n`;
+        txtContent += `--------------------------------\n`;
+        txtContent += `Mantenimientos Totales: ${total}\n`;
+        txtContent += `Realizados: ${completados}\n`;
+        txtContent += `Pendientes: ${pendientes}\n\n`;
+        
+        txtContent += `DISTRIBUCIÓN:\n`;
+        txtContent += `--------------------------------\n`;
+        txtContent += `Realizados: ${completados} (${Math.round((completados / total) * 100)}%)\n`;
+        txtContent += `Pendientes: ${pendientes} (${Math.round((pendientes / total) * 100}%)\n\n`;
+        
+        txtContent += `LISTADO DE MANTENIMIENTOS:\n`;
+        txtContent += `================================================================================\n`;
+        txtContent += `OT\tPatente\tFecha\tKilometraje\tTipo\tResponsable\tRealizado\tDescripción\tInsumos\n`;
+        txtContent += `================================================================================\n`;
+        
+        if (mantenimientos.length === 0) {
+          txtContent += `No hay mantenimientos para mostrar\n`;
+        } else {
+          mantenimientos.forEach(m => {
+            const descripcion = m.descripcion || 'Sin descripción';
+            const insumos = m.insumos ? 
+              m.insumos.map(i => `${i.descripcion} (${i.cantidad})`).join(', ') : 
+              'Sin insumos';
+            
+            txtContent += `${m.id || 'N/A'}\t`;
+            txtContent += `${m.patente || ''}\t`;
+            txtContent += `${formatDate(m.fecha)}\t`;
+            txtContent += `${m.kilometraje ? m.kilometraje.toLocaleString() : '0'}\t`;
+            txtContent += `${m.tipo_mantenimiento || ''}\t`;
+            txtContent += `${m.responsable || ''}\t`;
+            txtContent += `${m.realizado ? 'Sí' : 'No'}\t`;
+            txtContent += `${descripcion.replace(/\t|\n/g, ' ')}\t`; // Eliminar tabulaciones y saltos de línea en descripción
+            txtContent += `${insumos.replace(/\t|\n/g, ' ')}\n`; // Eliminar tabulaciones y saltos de línea en insumos
+          });
+        }
+        
+        txtContent += `\nFIN DEL REPORTE`;
+        
+        // Crear y descargar el archivo TXT
+        const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_mantenimientos_${new Date().toISOString().slice(0, 10)}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+        
+      } catch (error) {
+        console.error("Error al generar TXT:", error);
+        alert("Ocurrió un error al generar el archivo TXT. Por favor verifica los datos.");
+      }
+    }
+  </script>
+</body>
+</html>

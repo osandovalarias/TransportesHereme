@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Pinchazos - Impresión</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #3f72af;
+      padding-bottom: 15px;
+    }
+    
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-right: 20px;
+    }
+    
+    .title {
+      flex-grow: 1;
+      text-align: center;
+    }
+    
+    h1 {
+      color: #112d4e;
+      margin: 0;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+    
+    .subtitle {
+      color: #3f72af;
+      margin: 5px 0 0;
+      font-size: 18px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    
+    .section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+    
+    h2 {
+      color: #2c5282;
+      font-size: 18px;
+      border-bottom: 1px solid #dbe2ef;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .row {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    
+    .col {
+      flex: 1;
+      padding: 0 10px;
+    }
+    
+    .label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .value {
+      padding: 5px;
+      border-bottom: 1px dotted #ccc;
+      min-height: 20px;
+    }
+    
+    .neumaticos-container {
+      margin-top: 20px;
+    }
+    
+    .neumaticos-title {
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    
+    .neumaticos-seleccionados {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .neumatico-selected {
+      background-color: #e3f2fd;
+      border: 2px solid #3f72af;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .firma {
+      margin-top: 50px;
+      text-align: center;
+      width: 300px;
+      float: left;
+    }
+    
+    .linea-firma {
+      border-top: 1px solid #333;
+      width: 100%;
+      margin-top: 60px;
+      padding-top: 5px;
+      text-align: center;
+    }
+    
+    .clear {
+      clear: both;
+    }
+    
+    @media print {
+      body {
+        padding: 0;
+      }
+      
+      .container {
+        border: none;
+        box-shadow: none;
+        padding: 10px;
+      }
+      
+      .no-print {
+        display: none;
+      }
+      
+      .page-break {
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="img/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <div class="title">
+        <h1>REGISTRO</h1>
+        <p class="subtitle" id="titulo-registro"></p>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Información General</h2>
+      <div class="row">
+        <div class="col">
+          <div class="label">Fecha:</div>
+          <div class="value" id="fecha"></div>
+        </div>
+        <div class="col">
+          <div class="label">Turno:</div>
+          <div class="value" id="turno"></div>
+        </div>
+        <div class="col">
+          <div class="label">Kilometaje:</div>
+          <div class="value" id="kilometaje"></div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col">
+          <div class="label">Tipo de Vehículo:</div>
+          <div class="value" id="tipo-vehiculo"></div>
+        </div>
+        <div class="col">
+          <div class="label">Patente:</div>
+          <div class="value" id="patente"></div>
+        </div>
+        <div class="col">
+          <div class="label">Conductor:</div>
+          <div class="value" id="conductor"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Detalles del Problema</h2>
+      <div class="row">
+        <div class="col">
+          <div class="label">Problema Detectado:</div>
+          <div class="value" id="problema" style="min-height: 60px;"></div>
+        </div>
+        <div class="col">
+          <div class="label">Acción Tomada:</div>
+          <div class="value" id="accion" style="min-height: 60px;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section neumaticos-container">
+      <h2>Neumáticos Afectados</h2>
+      <div class="neumaticos-title">Selección de neumáticos afectados:</div>
+      <div class="neumaticos-seleccionados" id="neumaticos-seleccionados-container">
+        <!-- Aquí se insertarán dinámicamente los neumáticos seleccionados -->
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Control de Seguridad</h2>
+      <div class="row">
+        <div class="col">
+          <div class="label">Checklist de revisión:</div>
+          <div class="value" id="checklist"></div>
+        </div>
+        <div class="col">
+          <div class="label">Torque de tuercas:</div>
+          <div class="value" id="torque"></div>
+        </div>
+        <div class="col">
+          <div class="label">Verificación de Torque (km/hrs):</div>
+          <div class="value" id="revision-km"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <div class="firma" style="margin-right: 50px;">
+      <div class="linea-firma" id="supervisor-linea"></div>
+      <div>Supervisor</div>
+    </div>
+    
+    <div class="firma">
+      <div class="linea-firma" id="responsable-linea"></div>
+      <div>Responsable</div>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <div class="no-print" style="text-align: center; margin-top: 30px;">
+      <button onclick="window.print()" style="padding: 10px 20px; background: #3f72af; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Imprimir
+      </button>
+      <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+        Cerrar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Obtener parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Función para decodificar valores de la URL
+    function getParam(key) {
+      const value = urlParams.get(key);
+      return value ? decodeURIComponent(value) : '';
+    }
+    
+    // Mostrar el tipo de problema como título
+    const tipoProblema = getParam('tipo_problema') || 'PINCHADURA';
+    let titulo = '';
+    
+    switch(tipoProblema) {
+      case 'PINCHADURA':
+        titulo = 'DE PINCHEZOS';
+        break;
+      case 'CAMBIO':
+        titulo = 'DE CAMBIO DE NEUMÁTICO';
+        break;
+      case 'PREVENTIVO_CORRECTIVO':
+        titulo = 'PREVENTIVO/CORRECTIVO';
+        break;
+      default:
+        titulo = 'DE PINCHEZOS';
+    }
+    
+    document.getElementById('titulo-registro').textContent = titulo;
+    
+    // Mostrar datos del formulario
+    document.getElementById('fecha').textContent = getParam('fecha') || 'No especificado';
+    document.getElementById('turno').textContent = getParam('turno') || 'No especificado';
+    document.getElementById('kilometaje').textContent = getParam('kilometaje') || 'No especificado';
+    document.getElementById('tipo-vehiculo').textContent = getParam('tipo_vehiculo') || 'No especificado';
+    document.getElementById('patente').textContent = getParam('patente') || 'No especificado';
+    document.getElementById('conductor').textContent = getParam('conductor') || 'No especificado';
+    document.getElementById('problema').textContent = getParam('problema') || 'No especificado';
+    document.getElementById('accion').textContent = getParam('accion') || 'No especificado';
+    document.getElementById('checklist').textContent = (getParam('checklist') === 'SI' ? 'Sí' : 'No');
+    document.getElementById('torque').textContent = (getParam('torque') === 'SI' ? 'Sí' : 'No');
+    document.getElementById('revision-km').textContent = getParam('revision_km') || 'No especificado';
+    
+    // Mostrar supervisor y responsable
+    const supervisor = getParam('supervisor') || '_______________________';
+    const responsable = getParam('responsable') || '_______________________';
+    document.getElementById('supervisor-linea').textContent = supervisor;
+    document.getElementById('responsable-linea').textContent = responsable;
+    
+    // Mostrar solo neumáticos seleccionados
+    const neumaticosSeleccionados = (getParam('neumatico') || '').split('-');
+    const container = document.getElementById('neumaticos-seleccionados-container');
+    
+    // Limpiar contenedor
+    container.innerHTML = '';
+    
+    // Agregar cada neumático seleccionado
+    neumaticosSeleccionados.forEach(pos => {
+      if (pos) { // Asegurarse de que no sea una cadena vacía
+        const neumatico = document.createElement('div');
+        neumatico.className = 'neumatico-selected';
+        neumatico.textContent = pos;
+        container.appendChild(neumatico);
+      }
+    });
+    
+    // Si no hay neumáticos seleccionados, mostrar mensaje
+    if (container.children.length === 0) {
+      container.innerHTML = '<div style="font-style: italic;">No se seleccionaron neumáticos</div>';
+    }
+    
+    // Configurar impresión automática si se abre desde la vista previa
+    if (window.opener) {
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          window.print();
+        }, 500);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Personal - Tranportes Hereme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #3f72af;
+      --color-secondary: #dbe2ef;
+      --color-text: #112d4e;
+      --color-accent: #2c5282;
+      --color-success: #2ecc71;
+      --color-danger: #e74c3c;
+      --color-warning: #f39c12;
+      --color-info: #3498db;
+      --border-radius: 8px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 900px;
+      width: 100%;
+      padding: 30px;
+    }
+
+    h1 {
+      color: var(--color-primary);
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--color-secondary);
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      white-space: nowrap;
+      flex: 1;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .tab.active {
+      border-bottom: 3px solid var(--color-primary);
+      color: var(--color-primary);
+      background-color: rgba(63, 114, 175, 0.05);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: var(--color-text);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.2);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 180px;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: var(--color-success);
+    }
+
+    .btn-success:hover {
+      background: #27ae60;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: var(--color-danger);
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+    }
+
+    .btn-info {
+      background: var(--color-info);
+    }
+
+    .btn-info:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    .btn-warning {
+      background: var(--color-warning);
+    }
+
+    .btn-warning:hover {
+      background: #e67e22;
+      transform: translateY(-2px);
+    }
+
+    .btn-sm {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+      min-width: auto;
+    }
+
+    .person-list {
+      margin-top: 30px;
+    }
+
+    .person-list h3 {
+      color: var(--color-text);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-secondary);
+    }
+
+    .person-item {
+      background-color: white;
+      padding: 18px;
+      margin-bottom: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .person-item.gerente {
+      border-left-color: var(--color-info);
+    }
+
+    .person-item.jefe {
+      border-left-color: var(--color-warning);
+    }
+
+    .person-item.conductor {
+      border-left-color: var(--color-success);
+    }
+
+    .person-item.mecanico {
+      border-left-color: var(--color-primary);
+    }
+
+    .person-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .person-info {
+      flex: 1;
+    }
+
+    .person-info h4 {
+      color: var(--color-text);
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .person-type {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .person-type.gerente {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .person-type.jefe {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .person-type.conductor {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .person-type.mecanico {
+      background: #dbe2ef;
+      color: #112d4e;
+    }
+
+    .person-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .status-message {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: var(--border-radius);
+      text-align: center;
+      display: none;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: var(--color-danger);
+      border-left: 4px solid var(--color-danger);
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: var(--color-success);
+      border-left: 4px solid var(--color-success);
+    }
+
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border-left: 4px solid var(--color-info);
+    }
+
+    .person-count {
+      background: var(--color-primary);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        max-width: 100%;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        flex: 1 0 calc(50% - 4px);
+        padding: 10px;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .person-item {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .person-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tab {
+        flex: 1 0 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fas fa-users-cog"></i> Gestión de Personal - Transportes Hereme</h1>
+    
+    <div id="error-message" class="status-message error" style="display: none;"></div>
+    <div id="success-message" class="status-message success" style="display: none;"></div>
+    <div id="info-message" class="status-message info" style="display: none;"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="cambiarTab('mecanicos')">
+        <i class="fas fa-wrench"></i> Mecánicos
+      </div>
+      <div class="tab" onclick="cambiarTab('jefes_mantenimiento')">
+        <i class="fas fa-user-tie"></i> Jefes Mantenimiento
+      </div>
+      <div class="tab" onclick="cambiarTab('gerentes_operaciones')">
+        <i class="fas fa-user-cog"></i> Gerentes Operaciones
+      </div>
+      <div class="tab" onclick="cambiarTab('conductores')">
+        <i class="fas fa-bus"></i> Conductores
+      </div>
+    </div>
+
+    <!-- Tab Mecánicos -->
+    <div id="mecanicos-tab" class="tab-content active">
+      <h2><i class="fas fa-wrench"></i> Agregar Mecánico</h2>
+      
+      <label for="nombre-mecanico">Nombre del Mecánico:</label>
+      <input type="text" id="nombre-mecanico" placeholder="Ej: Juan Pérez">
+
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="guardarMecanico()">
+          <i class="fas fa-save"></i> Guardar Mecánico
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='menu.html'">
+          <i class="fas fa-arrow-left"></i> Volver al Menú
+        </button>
+      </div>
+
+      <div class="person-list">
+        <h3>Mecánicos Registrados <span class="person-count" id="count-mecanicos">0</span></h3>
+        <div id="lista-mecanicos"></div>
+      </div>
+    </div>
+
+    <!-- Tab Jefes de Mantenimiento -->
+    <div id="jefes_mantenimiento-tab" class="tab-content">
+      <h2><i class="fas fa-user-tie"></i> Agregar Jefe de Mantenimiento</h2>
+      
+      <label for="nombre-jefe-mantenimiento">Nombre del Jefe de Mantenimiento:</label>
+      <input type="text" id="nombre-jefe-mantenimiento" placeholder="Ej: Carlos López">
+
+      <div class="button-group">
+        <button class="btn btn-warning" onclick="guardarJefeMantenimiento()">
+          <i class="fas fa-save"></i> Guardar Jefe
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='mantenimientos.html'">
+          <i class="fas fa-arrow-left"></i> Volver a Mantenimientos
+        </button>
+      </div>
+
+      <div class="person-list">
+        <h3>Jefes de Mantenimiento Registrados <span class="person-count" id="count-jefes">0</span></h3>
+        <div id="lista-jefes_mantenimiento"></div>
+      </div>
+    </div>
+
+    <!-- Tab Gerentes de Operaciones -->
+    <div id="gerentes_operaciones-tab" class="tab-content">
+      <h2><i class="fas fa-user-cog"></i> Agregar Gerente de Operaciones</h2>
+      
+      <label for="nombre-gerente-operaciones">Nombre del Gerente de Operaciones:</label>
+      <input type="text" id="nombre-gerente-operaciones" placeholder="Ej: Ana García">
+
+      <div class="button-group">
+        <button class="btn btn-info" onclick="guardarGerenteOperaciones()">
+          <i class="fas fa-save"></i> Guardar Gerente
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='menu.html'">
+          <i class="fas fa-arrow-left"></i> Volver al Menú
+        </button>
+      </div>
+
+      <div class="person-list">
+        <h3>Gerentes de Operaciones Registrados <span class="person-count" id="count-gerentes">0</span></h3>
+        <div id="lista-gerentes_operaciones"></div>
+      </div>
+    </div>
+
+    <!-- Tab Conductores -->
+    <div id="conductores-tab" class="tab-content">
+      <h2><i class="fas fa-bus"></i> Agregar Conductor</h2>
+      
+      <label for="nombre-conductor">Nombre del Conductor:</label>
+      <input type="text" id="nombre-conductor" placeholder="Ej: Luis Ramírez">
+
+      <div class="button-group">
+        <button class="btn btn-success" onclick="guardarConductor()">
+          <i class="fas fa-save"></i> Guardar Conductor
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='menu.html'">
+          <i class="fas fa-arrow-left"></i> Volver al Menú
+        </button>
+      </div>
+
+      <div class="person-list">
+        <h3>Conductores Registrados <span class="person-count" id="count-conductores">0</span></h3>
+        <div id="lista-conductores"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuración de Supabase
+    const SUPABASE_URL = 'https://jrbluqwjmjsfoezzmjno.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Aw4gC43MsdZBMcTUnFT9Kg_hvfvDVHH';
+    
+    // Crear cliente de Supabase
+    let supabaseClient;
+
+    // Variables de estado
+    let currentTab = 'mecanicos';
+
+    // Mostrar mensaje de error
+    function mostrarError(mensaje) {
+      const errorElement = document.getElementById('error-message');
+      errorElement.textContent = mensaje;
+      errorElement.style.display = 'block';
+      
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+      }, 5000);
+    }
+
+    // Mostrar mensaje de éxito
+    function mostrarExito(mensaje) {
+      const successElement = document.getElementById('success-message');
+      successElement.textContent = mensaje;
+      successElement.style.display = 'block';
+      
+      setTimeout(() => {
+        successElement.style.display = 'none';
+      }, 3000);
+    }
+
+    // Mostrar mensaje informativo
+    function mostrarInfo(mensaje) {
+      const infoElement = document.getElementById('info-message');
+      infoElement.textContent = mensaje;
+      infoElement.style.display = 'block';
+      
+      setTimeout(() => {
+        infoElement.style.display = 'none';
+      }, 4000);
+    }
+
+    // Cambiar entre pestañas
+    function cambiarTab(tab) {
+      currentTab = tab;
+      
+      // Actualizar pestañas activas
+      document.querySelectorAll('.tab').forEach(t => {
+        t.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-content').forEach(c => {
+        c.classList.remove('active');
+      });
+      
+      // Activar la pestaña seleccionada
+      document.querySelector(`.tab[onclick="cambiarTab('${tab}')"]`).classList.add('active');
+      document.getElementById(`${tab}-tab`).classList.add('active');
+    }
+
+    // Verificar permisos
+    function verificarPermisos() {
+      const tipoUsuario = sessionStorage.getItem('tipoUsuario');
+      return tipoUsuario !== 'lectura';
+    }
+
+    // Mostrar alerta de permisos
+    function mostrarAlertaPermisos() {
+      mostrarError('No tienes permisos para realizar esta acción. Modo de solo lectura.');
+    }
+
+    // Guardar nuevo mecánico
+    async function guardarMecanico() {
+      if (!verificarPermisos()) {
+        mostrarAlertaPermisos();
+        return;
+      }
+      
+      const nombre = document.getElementById("nombre-mecanico").value.trim();
+      
+      if (!nombre) {
+        mostrarError("Por favor, ingresa un nombre válido.");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("mecanicos")
+          .insert([{ 
+            nombre: nombre,
+            tipo: 'mecanico',
+            fecha_creacion: new Date().toISOString()
+          }]);
+
+        if (error) throw error;
+
+        mostrarExito("Mecánico guardado correctamente");
+        document.getElementById("nombre-mecanico").value = "";
+        cargarMecanicos();
+        actualizarContadores();
+      } catch (error) {
+        console.error("Error al guardar mecánico:", error);
+        mostrarError("Error al guardar el mecánico: " + error.message);
+      }
+    }
+
+    // Guardar nuevo Jefe de Mantenimiento
+    async function guardarJefeMantenimiento() {
+      if (!verificarPermisos()) {
+        mostrarAlertaPermisos();
+        return;
+      }
+      
+      const nombre = document.getElementById("nombre-jefe-mantenimiento").value.trim();
+      
+      if (!nombre) {
+        mostrarError("Por favor, ingresa un nombre válido.");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("jefes_mantenimiento")
+          .insert([{ 
+            nombre: nombre,
+            tipo: 'jefe_mantenimiento',
+            fecha_creacion: new Date().toISOString()
+          }]);
+
+        if (error) throw error;
+
+        mostrarExito("Jefe de Mantenimiento guardado correctamente");
+        document.getElementById("nombre-jefe-mantenimiento").value = "";
+        cargarJefesMantenimiento();
+        actualizarContadores();
+      } catch (error) {
+        console.error("Error al guardar jefe de mantenimiento:", error);
+        mostrarError("Error al guardar el jefe de mantenimiento: " + error.message);
+      }
+    }
+
+    // Guardar nuevo Gerente de Operaciones
+    async function guardarGerenteOperaciones() {
+      if (!verificarPermisos()) {
+        mostrarAlertaPermisos();
+        return;
+      }
+      
+      const nombre = document.getElementById("nombre-gerente-operaciones").value.trim();
+      
+      if (!nombre) {
+        mostrarError("Por favor, ingresa un nombre válido.");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("gerentes_operaciones")
+          .insert([{ 
+            nombre: nombre,
+            tipo: 'gerente_operaciones',
+            fecha_creacion: new Date().toISOString()
+          }]);
+
+        if (error) throw error;
+
+        mostrarExito("Gerente de Operaciones guardado correctamente");
+        document.getElementById("nombre-gerente-operaciones").value = "";
+        cargarGerentesOperaciones();
+        actualizarContadores();
+      } catch (error) {
+        console.error("Error al guardar gerente de operaciones:", error);
+        mostrarError("Error al guardar el gerente de operaciones: " + error.message);
+      }
+    }
+
+    // Guardar nuevo conductor
+    async function guardarConductor() {
+      if (!verificarPermisos()) {
+        mostrarAlertaPermisos();
+        return;
+      }
+      
+      const nombre = document.getElementById("nombre-conductor").value.trim();
+      
+      if (!nombre) {
+        mostrarError("Por favor, ingresa un nombre válido.");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("conductores")
+          .insert([{ 
+            nombre: nombre,
+            tipo: 'conductor',
+            fecha_creacion: new Date().toISOString()
+          }]);
+
+        if (error) throw error;
+
+        mostrarExito("Conductor guardado correctamente");
+        document.getElementById("nombre-conductor").value = "";
+        cargarConductores();
+        actualizarContadores();
+      } catch (error) {
+        console.error("Error al guardar conductor:", error);
+        mostrarError("Error al guardar el conductor: " + error.message);
+      }
+    }
+
+    // Cargar mecánicos desde Supabase
+    async function cargarMecanicos() {
+      const lista = document.getElementById("lista-mecanicos");
+      lista.innerHTML = "<p style='text-align: center; padding: 20px;'><i class='fas fa-spinner fa-spin'></i> Cargando mecánicos...</p>";
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("mecanicos")
+          .select("*")
+          .order("nombre", { ascending: true });
+
+        if (error) throw error;
+
+        lista.innerHTML = "";
+
+        if (data.length === 0) {
+          lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #666;'>No hay mecánicos registrados</p>";
+          document.getElementById("count-mecanicos").textContent = "0";
+          return;
+        }
+
+        document.getElementById("count-mecanicos").textContent = data.length;
+
+        data.forEach(mecanico => {
+          const item = document.createElement("div");
+          item.className = "person-item mecanico";
+          
+          const infoDiv = document.createElement("div");
+          infoDiv.className = "person-info";
+          infoDiv.innerHTML = `
+            <h4>${mecanico.nombre}</h4>
+            <span class="person-type mecanico">Mecánico</span>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+              ${mecanico.fecha_creacion ? new Date(mecanico.fecha_creacion).toLocaleDateString() : ''}
+            </div>
+          `;
+          
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "person-actions";
+          
+          const editButton = document.createElement("button");
+          editButton.className = "btn btn-success btn-sm";
+          editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+          editButton.onclick = () => editarPersona('mecanicos', mecanico);
+          
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "btn btn-danger btn-sm";
+          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
+          deleteButton.onclick = () => eliminarPersona('mecanicos', mecanico.id);
+          
+          actionsDiv.appendChild(editButton);
+          actionsDiv.appendChild(deleteButton);
+          
+          item.appendChild(infoDiv);
+          item.appendChild(actionsDiv);
+          lista.appendChild(item);
+        });
+      } catch (error) {
+        console.error("Error al cargar mecánicos:", error);
+        lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #e74c3c;'>Error al cargar los mecánicos. Recarga la página.</p>";
+      }
+    }
+
+    // Cargar Jefes de Mantenimiento desde Supabase
+    async function cargarJefesMantenimiento() {
+      const lista = document.getElementById("lista-jefes_mantenimiento");
+      lista.innerHTML = "<p style='text-align: center; padding: 20px;'><i class='fas fa-spinner fa-spin'></i> Cargando jefes de mantenimiento...</p>";
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("jefes_mantenimiento")
+          .select("*")
+          .order("nombre", { ascending: true });
+
+        if (error) throw error;
+
+        lista.innerHTML = "";
+
+        if (data.length === 0) {
+          lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #666;'>No hay jefes de mantenimiento registrados</p>";
+          document.getElementById("count-jefes").textContent = "0";
+          return;
+        }
+
+        document.getElementById("count-jefes").textContent = data.length;
+
+        data.forEach(jefe => {
+          const item = document.createElement("div");
+          item.className = "person-item jefe";
+          
+          const infoDiv = document.createElement("div");
+          infoDiv.className = "person-info";
+          infoDiv.innerHTML = `
+            <h4>${jefe.nombre}</h4>
+            <span class="person-type jefe">Jefe de Mantenimiento</span>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+              ${jefe.fecha_creacion ? new Date(jefe.fecha_creacion).toLocaleDateString() : ''}
+            </div>
+          `;
+          
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "person-actions";
+          
+          const editButton = document.createElement("button");
+          editButton.className = "btn btn-success btn-sm";
+          editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+          editButton.onclick = () => editarPersona('jefes_mantenimiento', jefe);
+          
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "btn btn-danger btn-sm";
+          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
+          deleteButton.onclick = () => eliminarPersona('jefes_mantenimiento', jefe.id);
+          
+          actionsDiv.appendChild(editButton);
+          actionsDiv.appendChild(deleteButton);
+          
+          item.appendChild(infoDiv);
+          item.appendChild(actionsDiv);
+          lista.appendChild(item);
+        });
+      } catch (error) {
+        console.error("Error al cargar jefes de mantenimiento:", error);
+        lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #e74c3c;'>Error al cargar los jefes de mantenimiento. Recarga la página.</p>";
+      }
+    }
+
+    // Cargar Gerentes de Operaciones desde Supabase
+    async function cargarGerentesOperaciones() {
+      const lista = document.getElementById("lista-gerentes_operaciones");
+      lista.innerHTML = "<p style='text-align: center; padding: 20px;'><i class='fas fa-spinner fa-spin'></i> Cargando gerentes de operaciones...</p>";
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("gerentes_operaciones")
+          .select("*")
+          .order("nombre", { ascending: true });
+
+        if (error) throw error;
+
+        lista.innerHTML = "";
+
+        if (data.length === 0) {
+          lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #666;'>No hay gerentes de operaciones registrados</p>";
+          document.getElementById("count-gerentes").textContent = "0";
+          return;
+        }
+
+        document.getElementById("count-gerentes").textContent = data.length;
+
+        data.forEach(gerente => {
+          const item = document.createElement("div");
+          item.className = "person-item gerente";
+          
+          const infoDiv = document.createElement("div");
+          infoDiv.className = "person-info";
+          infoDiv.innerHTML = `
+            <h4>${gerente.nombre}</h4>
+            <span class="person-type gerente">Gerente de Operaciones</span>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+              ${gerente.fecha_creacion ? new Date(gerente.fecha_creacion).toLocaleDateString() : ''}
+            </div>
+          `;
+          
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "person-actions";
+          
+          const editButton = document.createElement("button");
+          editButton.className = "btn btn-success btn-sm";
+          editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+          editButton.onclick = () => editarPersona('gerentes_operaciones', gerente);
+          
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "btn btn-danger btn-sm";
+          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
+          deleteButton.onclick = () => eliminarPersona('gerentes_operaciones', gerente.id);
+          
+          actionsDiv.appendChild(editButton);
+          actionsDiv.appendChild(deleteButton);
+          
+          item.appendChild(infoDiv);
+          item.appendChild(actionsDiv);
+          lista.appendChild(item);
+        });
+      } catch (error) {
+        console.error("Error al cargar gerentes de operaciones:", error);
+        lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #e74c3c;'>Error al cargar los gerentes de operaciones. Recarga la página.</p>";
+      }
+    }
+
+    // Cargar conductores desde Supabase
+    async function cargarConductores() {
+      const lista = document.getElementById("lista-conductores");
+      lista.innerHTML = "<p style='text-align: center; padding: 20px;'><i class='fas fa-spinner fa-spin'></i> Cargando conductores...</p>";
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("conductores")
+          .select("*")
+          .order("nombre", { ascending: true });
+
+        if (error) throw error;
+
+        lista.innerHTML = "";
+
+        if (data.length === 0) {
+          lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #666;'>No hay conductores registrados</p>";
+          document.getElementById("count-conductores").textContent = "0";
+          return;
+        }
+
+        document.getElementById("count-conductores").textContent = data.length;
+
+        data.forEach(conductor => {
+          const item = document.createElement("div");
+          item.className = "person-item conductor";
+          
+          const infoDiv = document.createElement("div");
+          infoDiv.className = "person-info";
+          infoDiv.innerHTML = `
+            <h4>${conductor.nombre}</h4>
+            <span class="person-type conductor">Conductor</span>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+              ${conductor.fecha_creacion ? new Date(conductor.fecha_creacion).toLocaleDateString() : ''}
+            </div>
+          `;
+          
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "person-actions";
+          
+          const editButton = document.createElement("button");
+          editButton.className = "btn btn-success btn-sm";
+          editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+          editButton.onclick = () => editarPersona('conductores', conductor);
+          
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "btn btn-danger btn-sm";
+          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
+          deleteButton.onclick = () => eliminarPersona('conductores', conductor.id);
+          
+          actionsDiv.appendChild(editButton);
+          actionsDiv.appendChild(deleteButton);
+          
+          item.appendChild(infoDiv);
+          item.appendChild(actionsDiv);
+          lista.appendChild(item);
+        });
+      } catch (error) {
+        console.error("Error al cargar conductores:", error);
+        lista.innerHTML = "<p style='text-align: center; padding: 20px; color: #e74c3c;'>Error al cargar los conductores. Recarga la página.</p>";
+      }
+    }
+
+    // Actualizar contadores
+    async function actualizarContadores() {
+      try {
+        const [mecanicos, jefes, gerentes, conductores] = await Promise.all([
+          supabaseClient.from("mecanicos").select("*", { count: 'exact', head: true }),
+          supabaseClient.from("jefes_mantenimiento").select("*", { count: 'exact', head: true }),
+          supabaseClient.from("gerentes_operaciones").select("*", { count: 'exact', head: true }),
+          supabaseClient.from("conductores").select("*", { count: 'exact', head: true })
+        ]);
+
+        document.getElementById("count-mecanicos").textContent = mecanicos.count || 0;
+        document.getElementById("count-jefes").textContent = jefes.count || 0;
+        document.getElementById("count-gerentes").textContent = gerentes.count || 0;
+        document.getElementById("count-conductores").textContent = conductores.count || 0;
+      } catch (error) {
+        console.error("Error al actualizar contadores:", error);
+      }
+    }
+
+    // Editar persona
+    async function editarPersona(tabla, persona) {
+      if (!verificarPermisos()) {
+        mostrarAlertaPermisos();
+        return;
+      }
+      
+      const nuevoNombre = prompt("Editar nombre:", persona.nombre);
+      
+      if (nuevoNombre && nuevoNombre.trim() !== persona.nombre) {
+        try {
+          const { error } = await supabaseClient
+            .from(tabla)
+            .update({ 
+              nombre: nuevoNombre.trim(),
+              fecha_actualizacion: new Date().toISOString()
+            })
+            .eq("id", persona.id);
+
+          if (error) throw error;
+
+          mostrarExito("Registro actualizado correctamente");
+          
+          // Recargar la lista correspondiente
+          if (tabla === 'mecanicos') {
+            cargarMecanicos();
+          } else if (tabla === 'jefes_mantenimiento') {
+            cargarJefesMantenimiento();
+          } else if (tabla === 'gerentes_operaciones') {
+            cargarGerentesOperaciones();
+          } else {
+            cargarConductores();
+          }
+        } catch (error) {
+          mostrarError("Error al actualizar: " + error.message);
+        }
+      }
+    }
+
+    // Eliminar persona
+    async function eliminarPersona(tabla, id) {
+      if (!verificarPermisos()) {
+        mostrarAlertaPermisos();
+        return;
+      }
+      
+      if (!confirm("¿Estás seguro de que deseas eliminar este registro?")) {
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from(tabla)
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+
+        mostrarExito("Registro eliminado correctamente");
+        
+        // Recargar la lista correspondiente
+        if (tabla === 'mecanicos') {
+          cargarMecanicos();
+        } else if (tabla === 'jefes_mantenimiento') {
+          cargarJefesMantenimiento();
+        } else if (tabla === 'gerentes_operaciones') {
+          cargarGerentesOperaciones();
+        } else {
+          cargarConductores();
+        }
+        
+        actualizarContadores();
+      } catch (error) {
+        mostrarError("Error al eliminar: " + error.message);
+      }
+    }
+
+    // Crear tablas si no existen
+    async function crearTablasSiNoExisten() {
+      try {
+        // Verificar si existen las tablas
+        const tablas = ['gerentes_operaciones', 'jefes_mantenimiento', 'mecanicos', 'conductores'];
+        
+        for (const tabla of tablas) {
+          try {
+            const { error } = await supabaseClient
+              .from(tabla)
+              .select("*")
+              .limit(1);
+            
+            if (error && error.message.includes('does not exist')) {
+              mostrarInfo(`La tabla '${tabla}' no existe. Necesitas crearla en Supabase.`);
+            }
+          } catch (error) {
+            console.log(`Tabla ${tabla} no existe o hay error de RLS`);
+          }
+        }
+      } catch (error) {
+        console.error("Error verificando tablas:", error);
+      }
+    }
+
+    // Aplicar restricciones de solo lectura
+    function aplicarRestriccionesLectura() {
+      // 1. Modificar el título para indicar modo lectura
+      const titulo = document.querySelector('h1');
+      titulo.textContent += ' (Modo Lectura)';
+      
+      // 2. Deshabilitar botones de guardar
+      document.querySelectorAll('.btn-primary, .btn-warning, .btn-info, .btn-success').forEach(boton => {
+        if (boton.textContent.includes('Guardar')) {
+          boton.disabled = true;
+          boton.style.opacity = '0.6';
+          boton.style.cursor = 'not-allowed';
+          boton.style.background = '#cccccc';
+          boton.style.color = '#666666';
+          boton.title = 'No tienes permisos para realizar esta acción';
+        }
+      });
+
+      // 3. Deshabilitar botones de edición y eliminación
+      document.querySelectorAll('.btn-success.btn-sm, .btn-danger.btn-sm').forEach(boton => {
+        boton.disabled = true;
+        boton.style.opacity = '0.6';
+        boton.style.cursor = 'not-allowed';
+        boton.style.background = '#cccccc';
+        boton.style.color = '#666666';
+        boton.title = 'No tienes permisos para realizar esta acción';
+        boton.onclick = null;
+      });
+
+      // 4. Deshabilitar campos de entrada
+      document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.disabled = true;
+        input.style.backgroundColor = '#f5f5f5';
+      });
+
+      // 5. Mostrar mensaje informativo
+      const mensajeInfo = document.createElement('div');
+      mensajeInfo.className = 'status-message info';
+      mensajeInfo.textContent = 'Estás en modo de solo lectura. No puedes realizar modificaciones.';
+      document.querySelector('.container').insertBefore(mensajeInfo, document.querySelector('.tabs'));
+    }
+
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Inicializar cliente de Supabase
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
+      // Verificar permisos
+      const tipoUsuario = sessionStorage.getItem('tipoUsuario');
+      
+      if (tipoUsuario === 'lectura') {
+        aplicarRestriccionesLectura();
+      }
+      
+      // Verificar tablas
+      await crearTablasSiNoExisten();
+      
+      // Cargar datos iniciales
+      await Promise.all([
+        cargarMecanicos(),
+        cargarJefesMantenimiento(),
+        cargarGerentesOperaciones(),
+        cargarConductores()
+      ]);
+      
+      // Actualizar contadores
+      await actualizarContadores();
+      
+      // Mostrar mensaje de bienvenida
+      const usuario = sessionStorage.getItem('usuario') || 'Usuario';
+      mostrarInfo(`Bienvenido ${usuario} al sistema de Gestión de Personal`);
+    });
+  </script>
+</body>
+</html>

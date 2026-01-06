@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impresión Orden de Trabajo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            max-height: 80px;
+            margin-right: 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .order-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        .two-columns {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .column {
+            width: 48%;
+        }
+        .column div {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #333;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .signature-box {
+            width: 45%;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .status {
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .no-print {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .empty-space {
+            height: 20px;
+            border-bottom: 1px solid #eee;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .empty-space-no-line {
+            height: 20px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .print-button, .back-button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .print-button {
+            background-color: #3f72af;
+            color: white;
+        }
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+        }
+        .print-button:hover {
+            background-color: #2c5282;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .container, .container * {
+                visibility: visible;
+            }
+            .container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                border: none;
+                box-shadow: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .logo {
+                max-height: 70px;
+            }
+            .empty-space {
+                border-bottom: 1px solid #eee;
+            }
+            .empty-space-no-line {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <img src="img/logo.png" alt="Logo" class="logo" id="logo">
+                <h1 class="title">ORDEN DE TRABAJO</h1>
+                <div class="order-number" id="order-number">#</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DATOS GENERALES DE LA MÁQUINA / EQUIPO</div>
+            <div class="two-columns">
+                <div class="column">
+                    <div><strong>Máquina-Equipo:</strong> <span id="machine-name"></span></div>
+                    <div><strong>Marca:</strong> <span id="machine-brand"></span></div>
+                    <div><strong>Patente:</strong> <span id="machine-license"></span></div>
+                </div>
+                <div class="column">
+                    <div><strong>Modelo:</strong> <span id="machine-model"></span></div>
+                    <div><strong>Fabricante:</strong> <span id="machine-manufacturer"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DATOS DEL MANTENIMIENTO</div>
+            <div class="two-columns">
+                <div class="column">
+                    <div><strong>Fecha y hora inicio:</strong> <span id="start-date"></span></div>
+                    <div><strong>KM:</strong> <span id="km"></span></div>
+                </div>
+                <div class="column">
+                    <div><strong>Mantenimiento #</strong> <span id="maintenance-number"></span></div>
+                    <div><strong>Realizado</strong> <span id="status"></span></div>
+                </div>
+            </div>
+            <div class="two-columns">
+                <div class="column">
+                    <div><strong>Responsable:</strong> <span id="responsible"></span></div>
+                </div>
+                <div class="column">
+                    <div><strong>Tipo:</strong> <span id="maintenance-type"></span></div>
+                </div>
+            </div>
+            <div class="two-columns">
+                <div class="column">
+                    <div><strong>Fecha de cierre:</strong> <span id="close-date"></span></div>
+                </div>
+            </div>
+            
+            <div class="section-title">DESCRIPCION DEL TRABAJO A REALIZAR</div>
+            <div id="work-description-container">
+                <div id="work-description"></div>
+                <div id="work-description-spacing"></div>
+            </div>
+            
+            <div class="section-title">INSUMOS / MATERIALES</div>
+            <div id="materials-container">
+                <table id="materials-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="materials-empty"></div>
+            </div>
+        </div>
+
+        <div class="signatures">
+            <div class="signature-box">
+                <div>Elaborado por:</div>
+                <div id="created-by"></div>
+            </div>
+            <div class="signature-box">
+                <div>Autorizado por:</div>
+                <div id="approved-by"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="no-print button-container">
+        <button onclick="window.print()" class="print-button">Imprimir</button>
+        <button onclick="window.history.back()" class="back-button">Volver</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // CONEXIÓN A SUPABASE ACTUALIZADA
+        const SUPABASE_URL = 'https://jrbluqwjmjsfoezzmjno.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Aw4gC43MsdZBMcTUnFT9Kg_hvfvDVHH';
+        
+        let supabaseClient;
+
+        // Función para inicializar Supabase
+        function initializeSupabase() {
+            if (typeof window.supabase !== 'undefined' && !supabaseClient) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('Supabase inicializado correctamente con la nueva conexión');
+                return true;
+            }
+            return false;
+        }
+
+        // ============================================================
+        // FUNCIONES DE FECHA SIMPLIFICADAS - SOLUCIÓN DEFINITIVA
+        // ============================================================
+
+        /**
+         * SOLUCIÓN SIMPLIFICADA: Formatea una fecha directamente desde UTC
+         * asumiendo que Supabase almacena fechas en UTC
+         */
+        function formatDateFromUTC(dateString) {
+            if (!dateString) return '';
+            
+            try {
+                // Parsear la fecha como UTC
+                const date = new Date(dateString);
+                
+                if (isNaN(date.getTime())) {
+                    console.warn('Fecha inválida:', dateString);
+                    return '';
+                }
+                
+                // Extraer componentes en UTC
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                
+                return `${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('Error formateando fecha:', error, dateString);
+                return '';
+            }
+        }
+
+        /**
+         * Formatea fecha y hora desde UTC
+         */
+        function formatDateTimeFromUTC(dateString) {
+            if (!dateString) return '';
+            
+            try {
+                // Parsear la fecha como UTC
+                const date = new Date(dateString);
+                
+                if (isNaN(date.getTime())) {
+                    console.warn('Fecha inválida:', dateString);
+                    return '';
+                }
+                
+                // Extraer componentes en UTC
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch (error) {
+                console.error('Error formateando fecha/hora:', error, dateString);
+                return '';
+            }
+        }
+
+        /**
+         * SOLUCIÓN ALTERNATIVA: Usar la zona horaria local del navegador
+         * pero extraer componentes de fecha correctamente
+         */
+        function formatDateLocal(dateString) {
+            if (!dateString) return '';
+            
+            try {
+                const date = new Date(dateString);
+                
+                if (isNaN(date.getTime())) {
+                    console.warn('Fecha inválida:', dateString);
+                    return '';
+                }
+                
+                // Usar toLocaleDateString con timezone de Chile
+                // 'es-CL' para español de Chile
+                return date.toLocaleDateString('es-CL', {
+                    timeZone: 'America/Santiago',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            } catch (error) {
+                console.error('Error formateando fecha local:', error, dateString);
+                return '';
+            }
+        }
+
+        /**
+         * Formatea fecha y hora usando zona horaria local
+         */
+        function formatDateTimeLocal(dateString) {
+            if (!dateString) return '';
+            
+            try {
+                const date = new Date(dateString);
+                
+                if (isNaN(date.getTime())) {
+                    console.warn('Fecha inválida:', dateString);
+                    return '';
+                }
+                
+                // Formatear fecha
+                const fecha = date.toLocaleDateString('es-CL', {
+                    timeZone: 'America/Santiago',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                
+                // Formatear hora
+                const hora = date.toLocaleTimeString('es-CL', {
+                    timeZone: 'America/Santiago',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+                
+                return `${fecha} ${hora}`;
+            } catch (error) {
+                console.error('Error formateando fecha/hora local:', error, dateString);
+                return '';
+            }
+        }
+
+        // Función para obtener el ID de la URL
+        function getOrderId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Función para obtener datos de la máquina por ID
+        async function getMachineDataById(maquinaId) {
+            if (!maquinaId) return null;
+            
+            try {
+                if (!supabaseClient) {
+                    if (!initializeSupabase()) {
+                        throw new Error('No se pudo inicializar Supabase');
+                    }
+                }
+
+                const { data, error } = await supabaseClient
+                    .from('maquinas')
+                    .select('*')
+                    .eq('id', maquinaId)
+                    .single();
+
+                if (error) {
+                    console.error('Error al obtener datos de la máquina:', error);
+                    return null;
+                }
+                return data;
+            } catch (error) {
+                console.error('Excepción al obtener datos de la máquina:', error);
+                return null;
+            }
+        }
+
+        // Función para obtener datos del usuario autorizador por ID
+        async function getAuthorizerData(authorizerId) {
+            if (!authorizerId) return null;
+            
+            try {
+                if (!supabaseClient) {
+                    if (!initializeSupabase()) {
+                        throw new Error('No se pudo inicializar Supabase');
+                    }
+                }
+
+                // Primero intentar obtener de la tabla usuarios si existe
+                const { data: userData, error: userError } = await supabaseClient
+                    .from('usuarios')
+                    .select('nombre, apellido, cargo')
+                    .eq('id', authorizerId)
+                    .single();
+
+                if (!userError && userData) {
+                    // Si encontramos en la tabla usuarios, devolver nombre completo
+                    const nombreCompleto = `${userData.nombre || ''} ${userData.apellido || ''}`.trim();
+                    return nombreCompleto || userData.nombre || '';
+                }
+
+                // Si no hay tabla usuarios o no se encontró, intentar buscar en otra tabla común
+                // o devolver el ID como nombre por defecto
+                console.warn('No se encontró información del autorizador en tabla usuarios, usando ID como nombre');
+                return authorizerId;
+                
+            } catch (error) {
+                console.error('Excepción al obtener datos del autorizador:', error);
+                return null;
+            }
+        }
+
+        // Función para crear espacios en blanco con líneas
+        function createEmptyLines(containerId, count, withLines = true) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error(`Contenedor no encontrado: ${containerId}`);
+                return;
+            }
+            
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = withLines ? 'empty-space' : 'empty-space-no-line';
+                container.appendChild(emptyDiv);
+            }
+        }
+
+        // Cargar datos de la orden de trabajo - VERSIÓN FINAL
+        async function loadOrderData() {
+            // Inicializar Supabase antes de usarlo
+            if (!initializeSupabase()) {
+                alert('Error: No se pudo inicializar la conexión con la base de datos');
+                return;
+            }
+
+            const orderId = getOrderId();
+            if (!orderId) {
+                alert('No se proporcionó ID de orden de trabajo');
+                return;
+            }
+
+            try {
+                // Obtener datos del mantenimiento
+                const { data: maintenance, error: maintenanceError } = await supabaseClient
+                    .from('mantenimientos')
+                    .select('*')
+                    .eq('id', orderId)
+                    .single();
+
+                if (maintenanceError) {
+                    console.error('Error al obtener mantenimiento:', maintenanceError);
+                    throw maintenanceError;
+                }
+
+                console.log('Datos del mantenimiento:', maintenance);
+                
+                // Debug: Mostrar información de fechas
+                if (maintenance.fecha) {
+                    const fecha = new Date(maintenance.fecha);
+                    console.log('Fecha parseada:', fecha);
+                    console.log('UTC components:', {
+                        year: fecha.getUTCFullYear(),
+                        month: fecha.getUTCMonth() + 1,
+                        day: fecha.getUTCDate(),
+                        hours: fecha.getUTCHours(),
+                        minutes: fecha.getUTCMinutes()
+                    });
+                    console.log('Local components:', {
+                        year: fecha.getFullYear(),
+                        month: fecha.getMonth() + 1,
+                        day: fecha.getDate(),
+                        hours: fecha.getHours(),
+                        minutes: fecha.getMinutes()
+                    });
+                }
+
+                // Obtener datos de la máquina
+                let machineData = {
+                    nombre: '',
+                    marca: '',
+                    modelo: '',
+                    fabricante: '',
+                    patente: ''
+                };
+
+                if (maintenance.maquina_id) {
+                    const machine = await getMachineDataById(maintenance.maquina_id);
+                    if (machine) {
+                        machineData = {
+                            nombre: machine.nombre || machine.patente || '',
+                            marca: machine.marca || '',
+                            modelo: machine.modelo || '',
+                            fabricante: machine.fabricante || '',
+                            patente: machine.patente || ''
+                        };
+                    }
+                }
+
+                // Obtener nombre del autorizador
+                let authorizerName = '';
+                if (maintenance.autorizado_por_id) {
+                    // Si hay un ID de autorizador, buscar su nombre
+                    authorizerName = await getAuthorizerData(maintenance.autorizado_por_id);
+                } else if (maintenance.autorizado_por) {
+                    // Si ya hay un nombre directamente, usarlo
+                    authorizerName = maintenance.autorizado_por;
+                }
+
+                // Llenar los datos en el formulario
+                document.getElementById('order-number').textContent = `#${maintenance.id || ''}`;
+                document.getElementById('machine-name').textContent = machineData.nombre;
+                document.getElementById('machine-brand').textContent = machineData.marca;
+                document.getElementById('machine-model').textContent = machineData.modelo;
+                document.getElementById('machine-manufacturer').textContent = machineData.fabricante;
+                document.getElementById('machine-license').textContent = machineData.patente || maintenance.patente || '';
+                document.getElementById('maintenance-number').textContent = maintenance.id || '';
+                document.getElementById('responsible').textContent = maintenance.responsable || '';
+                document.getElementById('maintenance-type').textContent = maintenance.tipo_mantenimiento || '';
+                
+                // PRUEBA: Usar diferentes métodos para ver cuál funciona
+                console.log('=== PRUEBA DE FECHAS ===');
+                console.log('Fecha UTC original:', maintenance.fecha);
+                
+                // Método 1: UTC directo (recomendado)
+                const fechaInicioUTC = formatDateTimeFromUTC(maintenance.fecha);
+                const fechaCierreUTC = formatDateFromUTC(maintenance.fecha_cierre);
+                console.log('Método UTC - Inicio:', fechaInicioUTC);
+                console.log('Método UTC - Cierre:', fechaCierreUTC);
+                
+                // Método 2: Local con timezone
+                const fechaInicioLocal = formatDateTimeLocal(maintenance.fecha);
+                const fechaCierreLocal = formatDateLocal(maintenance.fecha_cierre);
+                console.log('Método Local - Inicio:', fechaInicioLocal);
+                console.log('Método Local - Cierre:', fechaCierreLocal);
+                
+                // DECISIÓN: Usar el método que muestre la fecha correcta
+                // Puedes cambiar entre UTC o Local según lo que veas en la consola
+                document.getElementById('close-date').textContent = fechaCierreUTC; // Cambiar a fechaCierreLocal si es necesario
+                document.getElementById('start-date').textContent = fechaInicioUTC; // Cambiar a fechaInicioLocal si es necesario
+                
+                document.getElementById('km').textContent = maintenance.kilometraje ? maintenance.kilometraje.toLocaleString() : '';
+                document.getElementById('status').textContent = maintenance.realizado ? 'REALIZADO' : 'NO REALIZADO';
+                document.getElementById('created-by').textContent = maintenance.responsable || '';
+                
+                // CAMBIO PRINCIPAL: Mostrar nombre en "Autorizado por:" en lugar del cargo
+                document.getElementById('approved-by').textContent = authorizerName || '';
+                
+                // Descripción del trabajo
+                const workDescription = document.getElementById('work-description');
+                const workDescriptionSpacing = document.getElementById('work-description-spacing');
+                
+                if (maintenance.descripcion && maintenance.descripcion.trim() !== '') {
+                    workDescription.textContent = maintenance.descripcion;
+                    // 3 espacios vacíos sin líneas cuando hay texto
+                    createEmptyLines('work-description-spacing', 3, false);
+                } else {
+                    workDescription.textContent = '';
+                    // 9 líneas con bordes cuando no hay texto
+                    createEmptyLines('work-description-spacing', 9, true);
+                }
+
+                // Manejo de materiales
+                const materialsTable = document.getElementById('materials-table');
+                const tbody = materialsTable.querySelector('tbody');
+                tbody.innerHTML = '';
+
+                if (maintenance.insumos && maintenance.insumos.length > 0) {
+                    materialsTable.style.display = '';
+                    maintenance.insumos.forEach(material => {
+                        const row = tbody.insertRow();
+                        const descCell = row.insertCell(0);
+                        const qtyCell = row.insertCell(1);
+                        descCell.textContent = material.descripcion || '';
+                        qtyCell.textContent = material.cantidad || '';
+                    });
+                    createEmptyLines('materials-empty', 0);
+                } else {
+                    materialsTable.style.display = 'none';
+                    createEmptyLines('materials-empty', 5);
+                }
+
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
+                alert('Error al cargar los datos de la orden de trabajo. Consulte la consola para más detalles.');
+            }
+        }
+
+        // Cargar los datos cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', loadOrderData);
+    </script>
+</body>
+</html>

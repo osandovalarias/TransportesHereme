@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Mantenciones Kilometraje Sprinter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #3f72af;
+      --color-secondary: #dbe2ef;
+      --color-text: #112d4e;
+      --color-accent: #2c5282;
+      --color-success: #2ecc71;
+      --color-error: #e74c3c;
+      --color-warning: #f39c12;
+      --border-radius: 8px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      --header-bg-color: #2c5282;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #3f72af, #dbe2ef);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--color-text);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+      background-color: var(--header-bg-color);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      color: white;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: white;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-secondary);
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-size: 1.5rem;
+    }
+
+    h3 {
+      text-align: left;
+      color: var(--color-primary);
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: white;
+      padding: 5px;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .title-container {
+      flex: 1;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #dbe2ef;
+      margin-top: -10px;
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-accent);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: var(--color-success);
+    }
+
+    .btn-success:hover {
+      background: #27ae60;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: var(--color-error);
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+    }
+
+    .btn-info {
+      background: var(--color-primary);
+    }
+
+    .btn-info:hover {
+      background: var(--color-accent);
+      transform: translateY(-2px);
+    }
+
+    .btn-print {
+      background: #6c757d;
+    }
+
+    .btn-print:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .status-message {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: var(--border-radius);
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: var(--color-error);
+      border-left: 4px solid var(--color-error);
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: var(--color-success);
+      border-left: 4px solid var(--color-success);
+    }
+
+    .info {
+      background-color: #e7f5ff;
+      color: var(--color-primary);
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .tabla-patentes {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+
+    .tabla-patentes th {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .tabla-patentes td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tabla-patentes tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .tabla-patentes tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .tabla-mantenimientos {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+
+    .tabla-mantenimientos th {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .tabla-mantenimientos td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tabla-mantenimientos tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .tabla-mantenimientos tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .estado-realizado {
+      color: var(--color-success);
+      font-weight: 600;
+    }
+
+    .estado-pendiente {
+      color: var(--color-warning);
+      font-weight: 600;
+    }
+
+    .estado-no-realizado {
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .filtros-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 20px;
+    }
+
+    .info-maquina {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    .info-col {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .info-value {
+      margin-top: 5px;
+    }
+
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      z-index: 100;
+    }
+
+    .connection-success {
+      background-color: var(--color-success);
+      color: white;
+    }
+
+    .connection-error {
+      background-color: var(--color-error);
+      color: white;
+    }
+
+    .connection-loading {
+      background-color: var(--color-primary);
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+
+    .proxima-mantencion {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 20px;
+    }
+
+    .proxima-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .proxima-item {
+      flex: 1;
+      min-width: 200px;
+      padding: 15px;
+      background-color: var(--color-secondary);
+      border-radius: var(--border-radius);
+    }
+
+    .proxima-item h3, .proxima-item h4 {
+      color: var(--color-primary);
+      margin-bottom: 10px;
+    }
+
+    .proxima-item p {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .urgente {
+      color: var(--color-error);
+      background-color: #f8d7da;
+    }
+
+    .proximo {
+      color: var(--color-warning);
+      background-color: #fff3cd;
+    }
+
+    .normal {
+      color: var(--color-success);
+      background-color: #d4edda;
+    }
+
+    .prioridad-indicator {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .prioridad-urgente {
+      background-color: var(--color-error);
+    }
+
+    .prioridad-proximo {
+      background-color: var(--color-warning);
+    }
+
+    .prioridad-normal {
+      background-color: var(--color-success);
+    }
+
+    .prioridad-texto {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      border: 1px solid #ddd;
+      font-size: 1rem;
+    }
+
+    .update-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .update-item {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .mantenimientos-container {
+      margin-top: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    .mantenimientos-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .mantenimiento-item {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mantenimiento-item:last-child {
+      border-bottom: none;
+    }
+
+    .mantenimiento-info {
+      flex: 1;
+    }
+
+    .mantenimiento-km {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .patentes-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 20px;
+    }
+
+    .patentes-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .patente-tag {
+      background-color: var(--color-secondary);
+      padding: 5px 10px;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .patente-tag button {
+      background: none;
+      border: none;
+      color: var(--color-error);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .add-patente-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .add-patente-form input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+    }
+
+    .sm-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .sm1 {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .sm2 {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .sm3 {
+      background-color: #cce5ff;
+      color: #004085;
+    }
+
+    .sm4 {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .historial-mantenciones {
+      margin-top: 20px;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .historial-mantenciones.visible {
+      max-height: 1000px;
+      transition: max-height 0.5s ease-in;
+    }
+
+    .tabla-historial {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .tabla-historial th {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .tabla-historial td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tabla-historial tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .tabla-historial tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .toggle-historial {
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .action-button {
+      width: 100%;
+      text-align: center;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    /* Estilos del modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: var(--border-radius);
+      border: 1px solid #ddd;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+   @media print {
+  body {
+    background: white;
+    color: black;
+    padding: 0;
+  }
+
+  /* Ocultar encabezado normal */
+  .header-container {
+    display: none !important;
+  }
+
+  h1, h2, h3 {
+    color: black !important;
+  }
+
+  .btn, .btn-group, .search-container, .filtros-container {
+    display: none !important;
+  }
+
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 10px;
+  }
+
+  .subtitle {
+    color: #555 !important;
+  }
+
+  .historial-mantenciones {
+    max-height: none !important;
+    display: block !important;
+  }
+
+  .proxima-mantencion {
+    page-break-inside: avoid;
+    margin-bottom: 30px;
+  }
+
+  /* Mostrar encabezado de impresión */
+  .print-header {
+    display: flex !important;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 15px;
+  }
+
+  .print-logo {
+    width: 60px;
+    height: 60px;
+    margin-right: 15px;
+  }
+
+  .print-title {
+    flex: 1;
+  }
+
+  .print-date {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #666;
+  }
+}
+
+    .print-header {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="print-header">
+      <img class="print-logo" src="img/logo.png" alt="Logo">
+      <div class="print-title">
+        <h1>Sistema de Mantenciones Kilometraje Sprinter</h1>
+        <div class="subtitle">Sistema SM1, SM2, SM3, SM4 (Chile)</div>
+      </div>
+      <div class="print-date" id="print-date"></div>
+    </div>
+
+    <div class="header-container">
+      <div class="logo-container">
+        <div class="logo">
+          <img src="img/logo.png" alt="Logo">
+        </div>
+        <div>
+          <h1>Sistema de Mantenciones Kilometraje Sprinter</h1>
+          <div class="subtitle">Sistema SM1, SM2, SM3, SM4 (Chile)</div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="window.location.href='proximas_mantenciones.html'">
+          <i class="fas fa-arrow-left"></i> Volver
+        </button>
+        <button class="btn btn-primary" onclick="mostrarDatos()">
+          <i class="fas fa-sync-alt"></i> Actualizar Datos
+        </button>
+        <button class="btn btn-print" onclick="imprimirDatos()">
+          <i class="fas fa-print"></i> Imprimir
+        </button>
+      </div>
+    </div>
+
+    <div id="error-message" class="status-message error" style="display: none;"></div>
+    <div id="success-message" class="status-message success" style="display: none;"></div>
+    <div id="connection-message" class="status-message info" style="display: none;"></div>
+
+    <div class="filtros-container">
+      <h2>Gestión de Kilometraje Sprinter</h2>
+      <div class="btn-group">
+        <button class="btn btn-info" onclick="mostrarConfigPatentes()">
+          <i class="fas fa-car"></i> Gestionar Patentes
+        </button>
+      </div>
+    </div>
+
+    <div class="patentes-container hidden" id="config-patentes">
+      <h2>Gestión de Patentes Sprinter</h2>
+      <div class="add-patente-form">
+        <input type="text" id="nueva-patente" placeholder="Ingrese nueva patente" maxlength="6">
+        <button class="btn btn-success" onclick="agregarPatente()">
+          <i class="fas fa-plus"></i> Agregar
+        </button>
+      </div>
+      <div class="patentes-list" id="lista-patentes">
+        <!-- Las patentes se cargarán aquí -->
+      </div>
+      <div class="btn-group" style="margin-top: 15px;">
+        <button class="btn btn-primary" onclick="guardarPatentes()">
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+        <button class="btn btn-secondary" onclick="ocultarConfigPatentes()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div id="resultados-container">
+      <h2>Información de Kilometraje Sprinter</h2>
+      <div class="search-container">
+        <input type="text" id="buscar-patente" placeholder="Buscar patente..." oninput="filtrarPatentes()">
+      </div>
+      <div id="resultados-patentes">
+        <!-- Los resultados se cargarán aquí -->
+      </div>
+    </div>
+
+    <div id="connection-status" class="connection-status connection-loading" style="display: none;">
+      <i class="fas fa-circle-notch fa-spin"></i> Conectando a la base de datos...
+    </div>
+
+    <script>
+      // Variables globales
+      let supabaseClient;
+      let patentesEspecificas = ['LWPP77', 'PHVW53', 'LJSJ82', 'RJTK26', 'LYZB94', 'PPPJ70', 'PHVW56', 'PBYS78', 'PHVW54', 'PPPJ69', 'TDDW14', 'TDDW16', 'TDDW18', 'TDDW19'];
+      const margenKmSprinter = 3000; // Aumentado a ±3000 km para considerar mantención Sprinter
+      
+      // Definición de los tipos de mantención SM
+      const tiposMantencion = [
+        { km: 10000, tipo: 'SM1' },
+        { km: 20000, tipo: 'SM1' },
+        { km: 30000, tipo: 'SM2' },
+        { km: 40000, tipo: 'SM1' },
+        { km: 50000, tipo: 'SM1' },
+        { km: 60000, tipo: 'SM3' },
+        { km: 70000, tipo: 'SM1' },
+        { km: 80000, tipo: 'SM1' },
+        { km: 90000, tipo: 'SM2' },
+        { km: 100000, tipo: 'SM1' },
+        { km: 110000, tipo: 'SM1' },
+        { km: 120000, tipo: 'SM3' },
+        { km: 130000, tipo: 'SM1' },
+        { km: 140000, tipo: 'SM1' },
+        { km: 150000, tipo: 'SM4' },
+        { km: 160000, tipo: 'SM1' },
+        { km: 170000, tipo: 'SM1' },
+        { km: 180000, tipo: 'SM3' },
+        { km: 190000, tipo: 'SM1' },
+        { km: 200000, tipo: 'SM1' },
+        { km: 210000, tipo: 'SM2' },
+        { km: 220000, tipo: 'SM1' },
+        { km: 230000, tipo: 'SM1' },
+        { km: 240000, tipo: 'SM3' },
+        { km: 250000, tipo: 'SM1' },
+        { km: 260000, tipo: 'SM1' },
+        { km: 270000, tipo: 'SM2' },
+        { km: 280000, tipo: 'SM1' },
+        { km: 290000, tipo: 'SM1' },
+        { km: 300000, tipo: 'SM3' },
+        { km: 310000, tipo: 'SM1' },
+        { km: 320000, tipo: 'SM1' },
+        { km: 330000, tipo: 'SM4' },
+        { km: 340000, tipo: 'SM1' },
+        { km: 350000, tipo: 'SM1' },
+        { km: 360000, tipo: 'SM3' },
+        { km: 370000, tipo: 'SM1' },
+        { km: 380000, tipo: 'SM1' },
+        { km: 390000, tipo: 'SM2' },
+        { km: 400000, tipo: 'SM1' },
+        { km: 410000, tipo: 'SM1' },
+        { km: 420000, tipo: 'SM3' }
+      ];
+
+      // Configurar zona horaria de Chile
+      const opcionesFechaChile = {
+        timeZone: 'America/Santiago',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+
+      // Función para verificar si Supabase está cargado
+      function verificarSupabaseCargado() {
+        if (typeof supabase !== 'undefined' && supabase.createClient) {
+          return true;
+        }
+        return false;
+      }
+
+      // Función para obtener datos completos de la máquina
+      async function obtenerDatosMaquina(patente) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('maquinas')
+            .select('*')
+            .eq('patente', patente)
+            .single();
+            
+          if (error) throw error;
+          
+          return data || {
+            patente: patente,
+            kilometraje: 0,
+            km_diario: 100,
+            marca: 'N/A',
+            modelo: 'N/A'
+          };
+        } catch (error) {
+          console.error(`Error al obtener datos para ${patente}:`, error);
+          return {
+            patente: patente,
+            kilometraje: 0,
+            km_diario: 100,
+            marca: 'N/A',
+            modelo: 'N/A'
+          };
+        }
+      }
+
+      // Función para obtener el último mantenimiento por kilometraje de una patente
+      async function obtenerUltimoMantenimientoKilometraje(patente) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('mantenimientos')
+            .select('*')
+            .eq('patente', patente)
+            .or('descripcion.ilike.%kilometraje%,descripcion.ilike.%km%,descripcion.ilike.%sprinter%')
+            .order('fecha', { ascending: false })
+            .limit(1);
+          
+          if (error) throw error;
+          
+          return data && data.length > 0 ? data[0] : null;
+        } catch (error) {
+          console.error(`Error al obtener último mantenimiento para ${patente}:`, error);
+          return null;
+        }
+      }
+
+      // Función para obtener todos los mantenimientos por kilometraje de una patente
+      async function obtenerTodosMantenimientosKilometraje(patente) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('mantenimientos')
+            .select('*')
+            .eq('patente', patente)
+            .or('descripcion.ilike.%kilometraje%,descripcion.ilike.%km%,descripcion.ilike.%sprinter%')
+            .order('fecha', { ascending: false });
+          
+          if (error) throw error;
+          
+          return data || [];
+        } catch (error) {
+          console.error(`Error al obtener mantenimientos para ${patente}:`, error);
+          return [];
+        }
+      }
+
+      // Función para cargar las patentes guardadas desde Supabase
+      async function cargarPatentesGuardadas() {
+        try {
+          const { data, error } = await supabaseClient
+            .from('patentes_sprinter')
+            .select('patente')
+            .order('id', { ascending: true });
+          
+          if (error) throw error;
+          
+          if (data && data.length > 0) {
+            patentesEspecificas = data.map(item => item.patente);
+          }
+        } catch (error) {
+          console.error('Error al cargar patentes guardadas:', error);
+          mostrarError('Error al cargar patentes guardadas: ' + error.message);
+        }
+      }
+
+      // Función para guardar las patentes en Supabase
+      async function guardarPatentesEnBD() {
+        try {
+          // Primero borrar todas las patentes existentes
+          const { error: deleteError } = await supabaseClient
+            .from('patentes_sprinter')
+            .delete()
+            .neq('id', 0);
+          
+          if (deleteError) throw deleteError;
+          
+          // Insertar las nuevas patentes
+          const patentesParaInsertar = patentesEspecificas.map((patente, index) => ({
+            id: index + 1,
+            patente: patente
+          }));
+          
+          const { error: insertError } = await supabaseClient
+            .from('patentes_sprinter')
+            .insert(patentesParaInsertar);
+          
+          if (insertError) throw insertError;
+          
+          return true;
+        } catch (error) {
+          console.error('Error al guardar patentes:', error);
+          throw error;
+        }
+      }
+
+      // Función para mostrar todos los mantenimientos en un modal
+      async function mostrarMantenimientos(patente) {
+        try {
+          const mantenimientos = await obtenerTodosMantenimientosKilometraje(patente);
+          const container = document.createElement('div');
+          container.className = 'mantenimientos-container';
+          
+          container.innerHTML = `
+            <h3>Historial de Mantenciones por Kilometraje - ${patente}</h3>
+            <div class="mantenimientos-list">
+              ${mantenimientos.length > 0 ? 
+                mantenimientos.map(m => `
+                  <div class="mantenimiento-item">
+                    <div class="mantenimiento-info">
+                      <strong>${m.fecha || 'Fecha no disponible'}</strong> - ${m.descripcion || 'Sin descripción'}
+                    </div>
+                    <div class="mantenimiento-km">${m.kilometraje ? m.kilometraje.toLocaleString('es-CL') + ' km' : 'N/A'}</div>
+                  </div>
+                `).join('') : 
+                '<p>No se encontraron mantenciones registradas</p>'
+              }
+            </div>
+            <button class="btn btn-primary" onclick="this.parentElement.remove()" style="margin-top: 15px; width: 100%;">
+              <i class="fas fa-times"></i> Cerrar
+            </button>
+          `;
+          
+          // Buscar el elemento de la patente y agregar el contenedor
+          const patenteElement = document.querySelector(`.proxima-mantencion h3[data-patente="${patente}"]`).closest('.proxima-mantencion');
+          if (patenteElement) {
+            // Remover contenedor existente si hay uno
+            const existingContainer = patenteElement.querySelector('.mantenimientos-container');
+            if (existingContainer) existingContainer.remove();
+            
+            patenteElement.appendChild(container);
+          }
+        } catch (error) {
+          console.error('Error al mostrar mantenimientos:', error);
+          mostrarError('Error al cargar el historial de mantenciones: ' + error.message);
+        }
+      }
+
+      // Función mejorada para encontrar la próxima mantención SM
+      function encontrarProximaMantencionSM(ultimoKm, kmActual) {
+        // Si no hay mantención registrada, la primera es a los 10,000 km
+        if (!ultimoKm || !ultimoKm.kilometraje) {
+          const kmRestantes = 10000 - kmActual;
+          return {
+            kmUltimaMantencion: 0,
+            kmProximaMantencion: 10000,
+            tipoProximaMantencion: 'SM1',
+            kmRestantes: kmRestantes,
+            ultimaFecha: null
+          };
+        }
+        
+        const kmUltimaMantencion = parseInt(ultimoKm.kilometraje);
+        
+        // Encontrar el punto SM más cercano al último km registrado
+        let mantencionMasCercana = null;
+        let diferenciaMinima = Infinity;
+
+        for (const mantencion of tiposMantencion) {
+          const diferencia = Math.abs(kmUltimaMantencion - mantencion.km);
+          if (diferencia < diferenciaMinima) {
+            diferenciaMinima = diferencia;
+            mantencionMasCercana = mantencion;
+          }
+        }
+
+        // Si no se encontró ninguna, usar 10,000 km por defecto
+        if (!mantencionMasCercana) {
+          const kmRestantes = 10000 - kmActual;
+          return {
+            kmUltimaMantencion: kmUltimaMantencion,
+            kmProximaMantencion: 10000,
+            tipoProximaMantencion: 'SM1',
+            kmRestantes: kmRestantes,
+            ultimaFecha: ultimoKm.fecha
+          };
+        }
+
+        // Buscar la próxima mantención después de la más cercana encontrada
+        const index = tiposMantencion.findIndex(m => m.km === mantencionMasCercana.km);
+        const proximaMantencion = index < tiposMantencion.length - 1 
+            ? tiposMantencion[index + 1] 
+            : mantencionMasCercana;
+
+        // Verificar si el kilometraje actual ya superó la próxima mantención
+        if (kmActual > proximaMantencion.km + margenKmSprinter) {
+          // Buscar la siguiente mantención que aún no se haya alcanzado
+          for (const mantencion of tiposMantencion) {
+            if (kmActual <= mantencion.km + margenKmSprinter) {
+              return {
+                kmUltimaMantencion: kmUltimaMantencion,
+                kmProximaMantencion: mantencion.km,
+                tipoProximaMantencion: mantencion.tipo,
+                kmRestantes: mantencion.km - kmActual,
+                ultimaFecha: ultimoKm.fecha
+              };
+            }
+          }
+        }
+
+        const kmRestantes = proximaMantencion.km - kmActual;
+        
+        return {
+          kmUltimaMantencion: kmUltimaMantencion,
+          kmProximaMantencion: proximaMantencion.km,
+          tipoProximaMantencion: proximaMantencion.tipo,
+          kmRestantes: kmRestantes,
+          ultimaFecha: ultimoKm.fecha
+        };
+      }
+
+      // Función para calcular días restantes basados en km diarios
+      function calcularDiasRestantes(kmRestantes, kmDiario) {
+        if (kmDiario <= 0 || kmDiario === undefined) return null;
+        
+        const diasRestantes = Math.ceil(kmRestantes / kmDiario);
+        const fechaProxima = new Date();
+        fechaProxima.setDate(fechaProxima.getDate() + diasRestantes);
+        
+        return {
+          diasRestantes,
+          fechaProxima
+        };
+      }
+
+      // Función para formatear fecha en formato chileno
+      function formatearFechaChilena(fecha) {
+        return fecha.toLocaleDateString('es-CL', opcionesFechaChile);
+      }
+
+      // Función para determinar la clase de prioridad
+      function obtenerClasePrioridad(dias) {
+        if (dias <= 7) return 'urgente';
+        if (dias <= 30) return 'proximo';
+        return 'normal';
+      }
+
+      // Función para filtrar patentes en la lista
+      function filtrarPatentes() {
+        const busqueda = document.getElementById('buscar-patente').value.toLowerCase();
+        const elementos = document.querySelectorAll('.proxima-mantencion');
+        
+        elementos.forEach(elemento => {
+          const patente = elemento.querySelector('h3').textContent.toLowerCase();
+          if (patente.includes(busqueda)) {
+            elemento.style.display = 'block';
+          } else {
+            elemento.style.display = 'none';
+          }
+        });
+      }
+
+      // Función para actualizar datos en la base de datos
+      async function actualizarDatosMaquina(patente, campo, valor) {
+        try {
+          // Primero verificar si existe el registro
+          const { data: existingData, error: fetchError } = await supabaseClient
+            .from('maquinas')
+            .select('patente')
+            .eq('patente', patente)
+            .single();
+          
+          let error;
+          
+          if (fetchError && fetchError.code !== 'PGRST116') {
+            throw fetchError;
+          }
+          
+          if (existingData) {
+            // Actualizar registro existente
+            const { error: updateError } = await supabaseClient
+              .from('maquinas')
+              .update({ [campo]: valor })
+              .eq('patente', patente);
+            error = updateError;
+          } else {
+            // Insertar nuevo registro
+            const { error: insertError } = await supabaseClient
+              .from('maquinas')
+              .insert({ 
+                patente: patente,
+                [campo]: valor 
+              });
+            error = insertError;
+          }
+          
+          if (error) throw error;
+          
+          mostrarExito(`${campo.replace('_', ' ')} actualizado para ${patente}`);
+          return true;
+        } catch (error) {
+          console.error(`Error al actualizar ${campo} para ${patente}:`, error);
+          mostrarError(`Error al actualizar ${campo} para ${patente}: ${error.message}`);
+          return false;
+        }
+      }
+
+      // Función para manejar la actualización de datos
+      async function actualizarDato(patente, campo) {
+        const input = document.getElementById(`${campo}-${patente}`);
+        const valor = campo === 'kilometraje' ? parseInt(input.value) : parseFloat(input.value);
+        
+        if (isNaN(valor)) {
+          mostrarError('Ingrese un valor numérico válido');
+          return;
+        }
+        
+        if (campo === 'km_diario' && valor <= 0) {
+          mostrarError('El kilometraje diario debe ser mayor a 0');
+          return;
+        }
+        
+        if (await actualizarDatosMaquina(patente, campo, valor)) {
+          // Recalcular después de actualizar
+          mostrarDatos();
+        }
+      }
+
+      // Función para mostrar la configuración de patentes
+      function mostrarConfigPatentes() {
+        document.getElementById('config-patentes').classList.remove('hidden');
+        document.getElementById('resultados-container').classList.add('hidden');
+        actualizarListaPatentes();
+      }
+
+      // Función para ocultar la configuración de patentes
+      function ocultarConfigPatentes() {
+        document.getElementById('config-patentes').classList.add('hidden');
+        document.getElementById('resultados-container').classList.remove('hidden');
+      }
+
+      // Función para actualizar la lista visual de patentes
+      function actualizarListaPatentes() {
+        const lista = document.getElementById('lista-patentes');
+        lista.innerHTML = '';
+        
+        patentesEspecificas.forEach(patente => {
+          const tag = document.createElement('div');
+          tag.className = 'patente-tag';
+          tag.innerHTML = `
+            ${patente}
+            <button onclick="eliminarPatente('${patente}')">
+              <i class="fas fa-times"></i>
+            </button>
+          `;
+          lista.appendChild(tag);
+        });
+      }
+
+      // Función para agregar una nueva patente
+      function agregarPatente() {
+        const input = document.getElementById('nueva-patente');
+        const nuevaPatente = input.value.trim().toUpperCase();
+        
+        if (!nuevaPatente) {
+          mostrarError('Ingrese una patente válida');
+          return;
+        }
+        
+        if (patentesEspecificas.includes(nuevaPatente)) {
+          mostrarError('Esta patente ya está en la lista');
+          return;
+        }
+        
+        patentesEspecificas.push(nuevaPatente);
+        input.value = '';
+        actualizarListaPatentes();
+        mostrarExito(`Patente ${nuevaPatente} agregada`);
+      }
+
+      // Función para eliminar una patente
+      function eliminarPatente(patente) {
+        patentesEspecificas = patentesEspecificas.filter(p => p !== patente);
+        actualizarListaPatentes();
+        mostrarExito(`Patente ${patente} eliminada`);
+      }
+
+      // Función para guardar las patentes en la base de datos
+      async function guardarPatentes() {
+        try {
+          await guardarPatentesEnBD();
+          mostrarExito('Lista de patentes actualizada y guardada');
+          ocultarConfigPatentes();
+          await mostrarDatos();
+        } catch (error) {
+          mostrarError('Error al guardar las patentes: ' + error.message);
+        }
+      }
+
+      // Función para imprimir los datos
+      function imprimirDatos() {
+        // Actualizar la fecha en el encabezado de impresión
+        const fechaActual = new Date();
+        document.getElementById('print-date').textContent = formatearFechaChilena(fechaActual);
+        
+        // Mostrar el encabezado de impresión
+        document.querySelector('.print-header').style.display = 'flex';
+        
+        // Imprimir la página
+        window.print();
+        
+        // Ocultar el encabezado de impresión después de imprimir
+        setTimeout(() => {
+          document.querySelector('.print-header').style.display = 'none';
+        }, 1000);
+      }
+
+      // Función principal para mostrar los datos
+      async function mostrarDatos() {
+        const resultadosDiv = document.getElementById('resultados-patentes');
+        resultadosDiv.innerHTML = '<p>Cargando datos...</p>';
+        
+        try {
+          let resultadosHTML = '';
+          
+          for (const patente of patentesEspecificas) {
+            const datosMaquina = await obtenerDatosMaquina(patente);
+            const kmDiario = datosMaquina.km_diario || 100;
+            const kmActual = datosMaquina.kilometraje || 0;
+            
+            const ultimoMantenimiento = await obtenerUltimoMantenimientoKilometraje(patente);
+            const calculoSM = encontrarProximaMantencionSM(ultimoMantenimiento, kmActual);
+            
+            let calculoDias = null;
+            let clasePrioridad = 'normal';
+            
+            if (calculoSM) {
+              calculoDias = calcularDiasRestantes(calculoSM.kmRestantes, kmDiario);
+              if (calculoDias) {
+                clasePrioridad = obtenerClasePrioridad(calculoDias.diasRestantes);
+              }
+            }
+            
+            resultadosHTML += `
+              <div class="proxima-mantencion">
+                <h3 data-patente="${patente}">${patente} - ${datosMaquina.marca} ${datosMaquina.modelo}</h3>
+                <div class="proxima-info">
+                  <div class="proxima-item">
+                    <h4>Kilometraje Actual</h4>
+                    <p>${kmActual.toLocaleString('es-CL')} km</p>
+                  </div>
+                  <div class="proxima-item">
+                    <h4>Última Mantención</h4>
+                    <p>${ultimoMantenimiento && ultimoMantenimiento.fecha ? ultimoMantenimiento.fecha : 'No registrada'}</p>
+                    <p>${ultimoMantenimiento && ultimoMantenimiento.kilometraje ? ultimoMantenimiento.kilometraje.toLocaleString('es-CL') + ' km' : 'N/A'}</p>
+                  </div>
+                  <div class="proxima-item">
+                    <h4>Próxima Mantención</h4>
+                    <p>${calculoSM ? calculoSM.kmProximaMantencion.toLocaleString('es-CL') + ' km' : 'N/A'}</p>
+                    ${calculoSM ? `
+                      <span class="sm-badge sm${calculoSM.tipoProximaMantencion.substring(2)}">
+                        ${calculoSM.tipoProximaMantencion}
+                      </span>
+                      <p>Km faltantes: ${calculoSM.kmRestantes.toLocaleString('es-CL')} km</p>
+                      <small>(±${margenKmSprinter.toLocaleString('es-CL')} km de margen)</small>
+                    ` : ''}
+                  </div>
+                  <div class="proxima-item ${clasePrioridad}">
+                    <h4>${calculoDias ? 'Días Restantes' : 'Kilómetros Restantes'}</h4>
+                    ${calculoDias ? `
+                      <p>${calculoDias.diasRestantes} días</p>
+                      <p>${formatearFechaChilena(calculoDias.fechaProxima)}</p>
+                    ` : `
+                      <p>${calculoSM ? calculoSM.kmRestantes.toLocaleString('es-CL') + ' km' : 'N/A'}</p>
+                      ${kmDiario <= 0 ? '<small>(No se puede calcular fecha sin km diario)</small>' : ''}
+                    `}
+                  </div>
+                </div>
+                <div class="input-row">
+                  <div class="input-group">
+                    <label for="kilometraje-${patente}">Actualizar Kilometraje:</label>
+                    <input type="number" id="kilometraje-${patente}" 
+                           value="${kmActual}" min="0" step="1">
+                    <button class="btn btn-primary action-button" onclick="actualizarDato('${patente}', 'kilometraje')">
+                      <i class="fas fa-save"></i> Guardar Kilometraje
+                    </button>
+                  </div>
+                  <div class="input-group">
+                    <label for="km_diario-${patente}">Km Diario Promedio:</label>
+                    <input type="number" id="km_diario-${patente}" 
+                           value="${kmDiario}" min="1" step="1">
+                    <button class="btn btn-success action-button" onclick="actualizarDato('${patente}', 'km_diario')">
+                      <i class="fas fa-save"></i> Guardar Km Diario
+                    </button>
+                  </div>
+                </div>
+                <button class="btn btn-info action-button" onclick="mostrarMantenimientos('${patente}')" style="margin-top: 10px;">
+                  <i class="fas fa-history"></i> Ver Historial de Mantenciones
+                </button>
+              </div>
+            `;
+          }
+          
+          resultadosDiv.innerHTML = resultadosHTML;
+          mostrarExito('Datos actualizados correctamente');
+        } catch (error) {
+          console.error('Error al mostrar datos:', error);
+          mostrarError('Error al cargar los datos: ' + error.message);
+        }
+      }
+
+      // Función para inicializar Supabase con reintentos
+      async function inicializarSupabase() {
+        const connectionStatus = document.getElementById('connection-status');
+        connectionStatus.style.display = 'block';
+        
+        // Verificar si Supabase está cargado
+        if (!verificarSupabaseCargado()) {
+          connectionStatus.className = 'connection-status connection-error';
+          connectionStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: Biblioteca Supabase no cargada';
+          mostrarError('La biblioteca Supabase no se ha cargado correctamente. Recargue la página.');
+          return false;
+        }
+
+        try {
+          // Configuración de Supabase - NUEVA CONEXIÓN
+          const supabaseUrl = 'https://jrbluqwjmjsfoezzmjno.supabase.co';
+          const supabaseKey = 'sb_publishable_Aw4gC43MsdZBMcTUnFT9Kg_hvfvDVHH';
+          
+          // Inicializar Supabase
+          supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+          
+          // Verificar conexión con un timeout
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Tiempo de espera agotado al conectar con Supabase')), 5000)
+          );
+          
+          const connectionPromise = supabaseClient
+            .from('maquinas')
+            .select('*')
+            .limit(1);
+          
+          // Usar Promise.race para manejar el timeout
+          await Promise.race([connectionPromise, timeoutPromise]);
+          
+          // Mostrar éxito en conexión
+          connectionStatus.className = 'connection-status connection-success';
+          connectionStatus.innerHTML = '<i class="fas fa-check-circle"></i> Conectado a la base de datos';
+          
+          // Ocultar después de 3 segundos
+          setTimeout(() => {
+            connectionStatus.style.display = 'none';
+          }, 3000);
+          
+          mostrarExito('Conexión con la base de datos establecida correctamente');
+          
+          // Cargar patentes guardadas
+          await cargarPatentesGuardadas();
+          
+          // Mostrar datos iniciales
+          await mostrarDatos();
+          
+          return true;
+        } catch (error) {
+          console.error('Error al conectar con Supabase:', error);
+          
+          // Mostrar error en conexión
+          connectionStatus.className = 'connection-status connection-error';
+          connectionStatus.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${error.message}`;
+          
+          mostrarError(`Error al conectar con la base de datos: ${error.message}`);
+          return false;
+        }
+      }
+
+      // Esperar a que se cargue la biblioteca Supabase
+      async function esperarSupabase() {
+        const maxIntentos = 5;
+        let intentos = 0;
+        
+        while (intentos < maxIntentos) {
+          if (verificarSupabaseCargado()) {
+            return true;
+          }
+          await new Promise(resolve => setTimeout(resolve, 500));
+          intentos++;
+        }
+        return false;
+      }
+
+      // Mostrar mensaje de error
+      function mostrarError(mensaje) {
+        const errorElement = document.getElementById('error-message');
+        errorElement.textContent = mensaje;
+        errorElement.style.display = 'block';
+        
+        setTimeout(() => {
+          errorElement.style.display = 'none';
+        }, 5000);
+      }
+
+      // Mostrar mensaje de éxito
+      function mostrarExito(mensaje) {
+        const successElement = document.getElementById('success-message');
+        successElement.textContent = mensaje;
+        successElement.style.display = 'block';
+        
+        setTimeout(() => {
+          successElement.style.display = 'none';
+        }, 3000);
+      }
+
+      // Inicializar la aplicación cuando se cargue la página
+      document.addEventListener('DOMContentLoaded', async function() {
+        // Esperar a que se cargue Supabase
+        const supabaseCargado = await esperarSupabase();
+        
+        if (!supabaseCargado) {
+          mostrarError('No se pudo cargar la biblioteca Supabase. Verifique su conexión a internet y recargue la página.');
+          return;
+        }
+        
+        // Inicializar Supabase
+        await inicializarSupabase();
+      });
+    </script>
+  </div>
+</body>
+</html>

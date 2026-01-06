@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pauta Preventiva - Sistemas Críticos</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; font-size: 11px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border: 1px solid #ccc; }
+        
+        /* Encabezado Corporativo */
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .header-table td { border: 1px solid black; padding: 5px; text-align: center; }
+        .logo-placeholder { font-weight: bold; color: #003366; font-size: 1.2em; }
+
+        /* Antecedentes del Vehículo */
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .info-table td { border: 1px solid black; padding: 6px; }
+        .label { font-weight: bold; background: #f0f0f0; width: 140px; }
+        input[type="text"] { width: 98%; border: none; outline: none; font-size: 11px; }
+
+        /* Secciones de Tablas */
+        .section-header { background: #333; color: white; padding: 6px; font-weight: bold; text-align: center; margin-top: 15px; text-transform: uppercase; }
+        .check-table { width: 100%; border-collapse: collapse; }
+        .check-table th, .check-table td { border: 1px solid black; padding: 5px; text-align: left; }
+        .check-table th { background: #eee; text-align: center; }
+        .center { text-align: center; width: 35px; }
+
+        /* Contenedores de Ejes */
+        .axle-row { display: flex; gap: 15px; margin-top: 10px; min-height: 200px; }
+        .obs-container { flex: 1; display: flex; flex-direction: column; }
+        .obs-container textarea { flex: 1; border: 2px solid black; resize: none; padding: 8px; font-family: inherit; }
+        .visual-container { flex: 2; border: 1px solid black; padding: 10px; text-align: center; position: relative; }
+        
+        /* Estilos de Ruedas y Pernos */
+        .wheels-wrapper { display: flex; justify-content: space-around; align-items: center; margin-top: 15px; }
+        .wheel-group { text-align: center; }
+        .bolt { fill: white; stroke: black; stroke-width: 1.2; cursor: pointer; transition: fill 0.2s; }
+        .bolt.marked { fill: black; } /* Cambio solicitado: Negro al marcar */
+
+        /* Cuadros de Torque Nm */
+        .torque-ui { display: flex; flex-direction: column; width: 55px; }
+        .torque-head { background: black; color: white; font-weight: bold; padding: 3px; font-size: 9px; }
+        .torque-input { border: 1px solid #ccc; background: #e0e0e0; height: 25px; text-align: center; font-weight: bold; }
+
+        /* Pie de firma */
+        .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 15px; border-top: 1px solid #000; }
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .container { border: none; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <table class="header-table">
+        
+    <div class="section-header">Inspección de Eje Delantero</div>
+    <div class="axle-row">
+        <div class="obs-container">
+            <strong>Observaciones:</strong>
+            <textarea placeholder="Notas sobre el eje delantero..."></textarea>
+        </div>
+        <div class="visual-container">
+            <strong>Eje Delantero</strong>
+            <div class="wheels-wrapper">
+                <div class="torque-ui"><div class="torque-head">Torque Nm</div><input class="torque-input"></div>
+                <div class="wheel-group">
+                    <div>Izquierda</div>
+                    <svg viewBox="0 0 100 100" width="110">
+                        <circle cx="50" cy="50" r="18" fill="black" />
+                        <circle class="bolt" cx="50" cy="12" r="6" /><circle class="bolt" cx="72" cy="19" r="6" /><circle class="bolt" cx="86" cy="38" r="6" /><circle class="bolt" cx="86" cy="62" r="6" /><circle class="bolt" cx="72" cy="81" r="6" /><circle class="bolt" cx="50" cy="88" r="6" /><circle class="bolt" cx="28" cy="81" r="6" /><circle class="bolt" cx="14" cy="62" r="6" /><circle class="bolt" cx="14" cy="38" r="6" /><circle class="bolt" cx="28" cy="19" r="6" />
+                    </svg>
+                </div>
+                <div class="wheel-group">
+                    <div>Derecha</div>
+                    <svg viewBox="0 0 100 100" width="110">
+                        <circle cx="50" cy="50" r="18" fill="black" />
+                        <circle class="bolt" cx="50" cy="12" r="6" /><circle class="bolt" cx="72" cy="19" r="6" /><circle class="bolt" cx="86" cy="38" r="6" /><circle class="bolt" cx="86" cy="62" r="6" /><circle class="bolt" cx="72" cy="81" r="6" /><circle class="bolt" cx="50" cy="88" r="6" /><circle class="bolt" cx="28" cy="81" r="6" /><circle class="bolt" cx="14" cy="62" r="6" /><circle class="bolt" cx="14" cy="38" r="6" /><circle class="bolt" cx="28" cy="19" r="6" />
+                    </svg>
+                </div>
+                <div class="torque-ui"><div class="torque-head">Torque Nm</div><input class="torque-input"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">Inspección de Eje Trasero</div>
+    <div class="axle-row">
+        <div class="obs-container">
+            <strong>Observaciones:</strong>
+            <textarea placeholder="Notas sobre el eje trasero..."></textarea>
+        </div>
+        <div class="visual-container">
+            <strong>Eje Trasero</strong>
+            <div class="wheels-wrapper">
+                <div class="torque-ui"><div class="torque-head">Torque Nm</div><input class="torque-input"></div>
+                <div class="wheel-group">
+                    <div>Izquierda</div>
+                    <svg viewBox="0 0 100 100" width="110">
+                        <circle cx="50" cy="50" r="18" fill="black" />
+                        <circle class="bolt" cx="50" cy="12" r="6" /><circle class="bolt" cx="72" cy="19" r="6" /><circle class="bolt" cx="86" cy="38" r="6" /><circle class="bolt" cx="86" cy="62" r="6" /><circle class="bolt" cx="72" cy="81" r="6" /><circle class="bolt" cx="50" cy="88" r="6" /><circle class="bolt" cx="28" cy="81" r="6" /><circle class="bolt" cx="14" cy="62" r="6" /><circle class="bolt" cx="14" cy="38" r="6" /><circle class="bolt" cx="28" cy="19" r="6" />
+                    </svg>
+                </div>
+                <div class="wheel-group">
+                    <div>Derecha</div>
+                    <svg viewBox="0 0 100 100" width="110">
+                        <circle cx="50" cy="50" r="18" fill="black" />
+                        <circle class="bolt" cx="50" cy="12" r="6" /><circle class="bolt" cx="72" cy="19" r="6" /><circle class="bolt" cx="86" cy="38" r="6" /><circle class="bolt" cx="86" cy="62" r="6" /><circle class="bolt" cx="72" cy="81" r="6" /><circle class="bolt" cx="50" cy="88" r="6" /><circle class="bolt" cx="28" cy="81" r="6" /><circle class="bolt" cx="14" cy="62" r="6" /><circle class="bolt" cx="14" cy="38" r="6" /><circle class="bolt" cx="28" cy="19" r="6" />
+                    </svg>
+                </div>
+                <div class="torque-ui"><div class="torque-head">Torque Nm</div><input class="torque-input"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">SISTEMA DE RODADO</div>
+    <table class="check-table">
+        
+
+<script>
+    // Manejo de interacción de pernos (Cambia a NEGRO al hacer clic)
+    document.querySelectorAll('.bolt').forEach(bolt => {
+        bolt.addEventListener('click', function() {
+            this.classList.toggle('marked');
+        });
+    });
+</script>
+
+</body>
+</html>

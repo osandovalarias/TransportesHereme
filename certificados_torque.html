@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Certificado de Torque de Ruedas</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-section {
+            flex: 2;
+            min-width: 500px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .certificate {
+            border: 1px solid #ddd;
+            padding: 30px;
+            flex-grow: 1;
+            background-color: white;
+            min-height: 600px;
+            position: relative;
+        }
+        
+        .logo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-img {
+            max-width: 150px;
+            max-height: 70px;
+        }
+        
+        .company-info {
+            text-align: right;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .certificate-title {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 28px;
+            font-weight: bold;
+            text-decoration: underline;
+            color: #2c3e50;
+        }
+        
+        .certificate-content {
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .certificate-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .torque-review {
+            text-align: center;
+            margin: 25px 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .torque-review input {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .certificate-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .detail-item {
+            margin-bottom: 10px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .signature-section {
+            margin-top: 80px;
+            text-align: center;
+        }
+        
+        .signature {
+            display: inline-block;
+            text-align: center;
+            width: 300px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+            margin-top: 40px;
+        }
+        
+        .signature-name {
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .signature-title {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .print-btn {
+            background-color: #27ae60;
+        }
+        
+        .print-btn:hover {
+            background-color: #219653;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #3498db;
+        }
+        
+        .loader.active {
+            display: block;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            background-color: #fdf2f2;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .error-message.active {
+            display: block;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        @media print {
+            .form-section, .controls, header, .footer {
+                display: none;
+            }
+            
+            .preview-section {
+                box-shadow: none;
+                width: 100%;
+                padding: 0;
+            }
+            
+            .certificate {
+                border: none;
+                padding: 0;
+                min-height: auto;
+            }
+            
+            .torque-review input {
+                border: none;
+                background: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Generador de Certificado de Torque de Ruedas</h1>
+            <p class="subtitle">Sistema conectado a base de datos Supabase</p>
+        </header>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="loader" id="loader">Conectando a la base de datos...</div>
+        
+        <div class="content" id="content" style="display: none;">
+            <div class="form-section">
+                <h2>Datos del Certificado</h2>
+                
+                <div class="form-group">
+                    <label for="companyName">Nombre de la Empresa:</label>
+                    <input type="text" id="companyName" value="HERRAMIENTAS, REPUESTOS, SERVICIOS MINEROS HRM LTDA">
+                </div>
+                
+                <div class="form-group">
+                    <label for="companyRut">RUT Empresa:</label>
+                    <input type="text" id="companyRut" value="76.058.491-6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Fecha:</label>
+                    <input type="text" id="date" placeholder="Seleccione fecha">
+                </div>
+                
+                <div class="form-group">
+                    <label for="vehiclePlate">Patente del Vehículo:</label>
+                    <select id="vehiclePlate">
+                        <option value="">Cargando patentes...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vehicleModel">Modelo del Vehículo:</label>
+                    <input type="text" id="vehicleModel" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mileage">Kilometraje:</label>
+                    <input type="text" id="mileage" placeholder="Ej: 245.066">
+                </div>
+                
+                <div class="form-group">
+                    <label for="torqueNumber">N° de Serie Torque:</label>
+                    <input type="text" id="torqueNumber" placeholder="Ej: JW2018110146">
+                </div>
+                
+                <div class="form-group">
+                    <label for="torqueValue">Valor de Torque:</label>
+                    <input type="text" id="torqueValue" value="850 Nm">
+                </div>
+                
+                <div class="form-group">
+                    <label for="torqueReview">Texto de Revisión:</label>
+                    <input type="text" id="torqueReview" value="REVISIÓN PREVENTIVO TORQUE RUEDAS">
+                </div>
+                
+                <div class="form-group">
+                    <label for="clientName">Nombre del Cliente:</label>
+                    <input type="text" id="clientName" value="TRANSPORTES HEREME">
+                </div>
+                
+                <div class="form-group">
+                    <label for="performedBy">Realizado por:</label>
+                    <select id="performedBy">
+                        <option value="">Cargando personal...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="maintenanceChief">Jefe de Mantenimiento:</label>
+                    <input type="text" id="maintenanceChief" value="JUAN SEPULVEDA C">
+                </div>
+                
+                <button id="updateBtn">Actualizar Certificado</button>
+            </div>
+            
+            <div class="preview-section">
+                <!-- Se eliminó el título "Vista Previa del Certificado" -->
+                
+                <div class="certificate" id="certificate">
+                    <div class="logo-header">
+                        <div id="logoContainer">
+                            <img src="img/logo.png" alt="Logo HRM" class="logo-img" onerror="this.style.display='none'">
+                        </div>
+                        <div class="company-info">
+                            <div>HERRAMIENTAS REPUESTOS</div>
+                            <div>SERVICIOS MINEROS HRM LTDA.</div>
+                            <div>LOS ANDES, <span id="certDateValue"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="certificate-title">CERTIFICADO</div>
+                    
+                    <div class="certificate-content">
+                        <p>Certificamos que el vehículo, PATENTE: <span id="certPlate">SPHR-72</span> de LA EMPRESA, <strong id="certCompany">HERRAMIENTAS, REPUESTOS, SERVICIOS MINEROS HRM LTDA</strong> Rut: <span id="certRut">76.058.491-6</span>, realizó REVISIÓN DE TORQUES DE TUERCAS DE RUEDAS, el cual se encuentra apto para actividades y servicios mineros según las normas establecidas por la marca.</p>
+                        
+                        <div class="torque-review">
+                            *<span id="certTorqueReview">REVISIÓN PREVENTIVO TORQUE RUEDAS</span> <span id="certTorque">850 Nm</span> DE TORQUE*
+                        </div>
+                        
+                        <div class="certificate-details">
+                            <div class="detail-item">
+                                <span class="detail-label">USUARIO:</span> <span id="certClient">TRANSPORTES HEREME</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">VEHICULO:</span> <span id="certVehicle">YUTONG ZK6938</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">PATENTE:</span> <span id="certPlate2">SPHR-72</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">KILOMETRAJE:</span> <span id="certMileage">245.066</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">N° DE SERIE TORQUE:</span> <span id="certTorqueNum">JW2018110146</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">REALIZADO POR:</span> <span id="certPerformedBy">JORGE CORTES</span>
+                            </div>
+                        </div>
+                        
+                        <div class="signature-section">
+                            <div class="signature">
+                                <div class="signature-name" id="certChief">JUAN SEPULVEDA C</div>
+                                <div class="signature-title">JEFE DE MANTENIMIENTO</div>
+                                <div class="signature-title">TRANSPORTES HEREME LTDA</div>
+                                <div class="signature-title">76.058.491-6</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="print-btn" id="printBtn">Imprimir Certificado</button>
+                    <button class="reset-btn" id="resetBtn">Restablecer Valores</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generador de Certificado de Torque de Ruedas - Sistema HRM</p>
+            <p>© 2025 - Herramientas, Repuestos, Servicios Mineros HRM LTDA</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    
+    <script>
+        // ============================================
+        // CONFIGURACIÓN SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://jrbluqwjmjsfoezzmjno.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Aw4gC43MsdZBMcTUnFT9Kg_hvfvDVHH';
+        
+        // Variables globales
+        let supabaseClient;
+        let maquinasData = [];
+        let personalData = [];
+        
+        // Elementos del DOM
+        const companyNameInput = document.getElementById('companyName');
+        const companyRutInput = document.getElementById('companyRut');
+        const dateInput = document.getElementById('date');
+        const vehiclePlateSelect = document.getElementById('vehiclePlate');
+        const vehicleModelInput = document.getElementById('vehicleModel');
+        const mileageInput = document.getElementById('mileage');
+        const torqueNumberInput = document.getElementById('torqueNumber');
+        const torqueValueInput = document.getElementById('torqueValue');
+        const torqueReviewInput = document.getElementById('torqueReview');
+        const clientNameInput = document.getElementById('clientName');
+        const performedBySelect = document.getElementById('performedBy');
+        const maintenanceChiefInput = document.getElementById('maintenanceChief');
+        
+        // Elementos del certificado
+        const certDateValue = document.getElementById('certDateValue');
+        const certPlate = document.getElementById('certPlate');
+        const certCompany = document.getElementById('certCompany');
+        const certRut = document.getElementById('certRut');
+        const certTorque = document.getElementById('certTorque');
+        const certTorqueReview = document.getElementById('certTorqueReview');
+        const certClient = document.getElementById('certClient');
+        const certVehicle = document.getElementById('certVehicle');
+        const certPlate2 = document.getElementById('certPlate2');
+        const certMileage = document.getElementById('certMileage');
+        const certTorqueNum = document.getElementById('certTorqueNum');
+        const certPerformedBy = document.getElementById('certPerformedBy');
+        const certChief = document.getElementById('certChief');
+        
+        // Elementos de UI
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('errorMessage');
+        const content = document.getElementById('content');
+        const updateBtn = document.getElementById('updateBtn');
+        const printBtn = document.getElementById('printBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // ============================================
+        // FUNCIONES DE UTILIDAD
+        // ============================================
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('active');
+        }
+        
+        function formatDate(date) {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('es-ES', options).toUpperCase();
+        }
+        
+        // ============================================
+        // FUNCIONES DE DATOS - CONEXIÓN DIRECTA
+        // ============================================
+        
+        function initDatePicker() {
+            flatpickr(dateInput, {
+                dateFormat: "d F Y",
+                locale: "es",
+                defaultDate: new Date(),
+                onChange: function(selectedDates, dateStr) {
+                    updateCertificate();
+                }
+            });
+            
+            const today = new Date();
+            dateInput.value = formatDate(today);
+            updateCertificate();
+        }
+        
+        async function loadMaquinas() {
+            try {
+                hideError();
+                
+                // Intentar consulta directa con fetch para evitar problemas de RLS
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/maquinas?select=patente,modelo&order=patente.asc`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                maquinasData = data || [];
+                
+                vehiclePlateSelect.innerHTML = '<option value="">Seleccione patente</option>';
+                
+                if (maquinasData.length === 0) {
+                    vehiclePlateSelect.innerHTML = '<option value="">No hay vehículos registrados</option>';
+                } else {
+                    maquinasData.forEach(maquina => {
+                        const option = document.createElement('option');
+                        option.value = maquina.patente;
+                        option.textContent = maquina.patente;
+                        vehiclePlateSelect.appendChild(option);
+                    });
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Error cargando máquinas:', error);
+                showError(`Error cargando vehículos: ${error.message}`);
+                
+                // Intentar método alternativo
+                return await loadMaquinasAlternative();
+            }
+        }
+        
+        async function loadMaquinasAlternative() {
+            try {
+                // Método alternativo usando Supabase client
+                const { data, error } = await supabaseClient
+                    .from('maquinas')
+                    .select('patente, modelo')
+                    .order('patente');
+                
+                if (error) throw error;
+                
+                maquinasData = data || [];
+                
+                vehiclePlateSelect.innerHTML = '<option value="">Seleccione patente</option>';
+                maquinasData.forEach(maquina => {
+                    const option = document.createElement('option');
+                    option.value = maquina.patente;
+                    option.textContent = maquina.patente;
+                    vehiclePlateSelect.appendChild(option);
+                });
+                
+                return true;
+            } catch (error) {
+                throw error;
+            }
+        }
+        
+        async function loadPersonal() {
+            try {
+                hideError();
+                
+                let allPersonal = [];
+                const tables = ['mecanicos', 'gerentes_operaciones', 'jefes_mantenimiento'];
+                
+                for (const table of tables) {
+                    try {
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=nombre&order=nombre.asc`, {
+                            method: 'GET',
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data && data.length > 0) {
+                                allPersonal = [...allPersonal, ...data];
+                            }
+                        }
+                    } catch (tableError) {
+                        console.warn(`Error en tabla ${table}:`, tableError);
+                    }
+                }
+                
+                personalData = allPersonal;
+                
+                performedBySelect.innerHTML = '<option value="">Seleccione personal</option>';
+                
+                if (personalData.length === 0) {
+                    performedBySelect.innerHTML = '<option value="">No hay personal registrado</option>';
+                } else {
+                    const uniqueNames = [...new Set(personalData.map(p => p.nombre))];
+                    uniqueNames.sort();
+                    
+                    uniqueNames.forEach(nombre => {
+                        const option = document.createElement('option');
+                        option.value = nombre;
+                        option.textContent = nombre;
+                        performedBySelect.appendChild(option);
+                    });
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Error cargando personal:', error);
+                showError(`Error cargando personal: ${error.message}`);
+                
+                // Intentar método alternativo
+                return await loadPersonalAlternative();
+            }
+        }
+        
+        async function loadPersonalAlternative() {
+            try {
+                let allPersonal = [];
+                const tables = ['mecanicos', 'gerentes_operaciones', 'jefes_mantenimiento'];
+                
+                for (const table of tables) {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from(table)
+                            .select('nombre')
+                            .order('nombre');
+                        
+                        if (!error && data) {
+                            allPersonal = [...allPersonal, ...data];
+                        }
+                    } catch (tableError) {
+                        console.warn(`Error en tabla ${table}:`, tableError);
+                    }
+                }
+                
+                personalData = allPersonal;
+                
+                performedBySelect.innerHTML = '<option value="">Seleccione personal</option>';
+                const uniqueNames = [...new Set(personalData.map(p => p.nombre))];
+                uniqueNames.sort();
+                
+                uniqueNames.forEach(nombre => {
+                    const option = document.createElement('option');
+                    option.value = nombre;
+                    option.textContent = nombre;
+                    performedBySelect.appendChild(option);
+                });
+                
+                return true;
+            } catch (error) {
+                throw error;
+            }
+        }
+        
+        function setupVehicleModelListener() {
+            vehiclePlateSelect.addEventListener('change', function() {
+                const selectedPlate = this.value;
+                const maquina = maquinasData.find(m => m.patente === selectedPlate);
+                
+                if (maquina) {
+                    vehicleModelInput.value = maquina.modelo || '';
+                } else {
+                    vehicleModelInput.value = '';
+                }
+                
+                updateCertificate();
+            });
+        }
+        
+        // ============================================
+        // FUNCIONES DEL CERTIFICADO
+        // ============================================
+        
+        function updateCertificate() {
+            const dateValue = dateInput.value || '';
+            const plateValue = vehiclePlateSelect.value || '';
+            const companyValue = companyNameInput.value || '';
+            const rutValue = companyRutInput.value || '';
+            const torqueValue = torqueValueInput.value || '';
+            const torqueReviewValue = torqueReviewInput.value || '';
+            const clientValue = clientNameInput.value || '';
+            const vehicleValue = vehicleModelInput.value || '';
+            const mileageValue = mileageInput.value || '';
+            const torqueNumValue = torqueNumberInput.value || '';
+            const performedValue = performedBySelect.value || '';
+            const chiefValue = maintenanceChiefInput.value || '';
+            
+            certDateValue.textContent = dateValue.toUpperCase();
+            certPlate.textContent = plateValue;
+            certCompany.textContent = companyValue.toUpperCase();
+            certRut.textContent = rutValue;
+            certTorque.textContent = torqueValue;
+            certTorqueReview.textContent = torqueReviewValue.toUpperCase();
+            certClient.textContent = clientValue.toUpperCase();
+            certVehicle.textContent = vehicleValue.toUpperCase();
+            certPlate2.textContent = plateValue;
+            certMileage.textContent = mileageValue;
+            certTorqueNum.textContent = torqueNumValue;
+            certPerformedBy.textContent = performedValue.toUpperCase();
+            certChief.textContent = chiefValue.toUpperCase();
+            
+            const signatureTitleElements = document.querySelectorAll('.signature-title');
+            if (signatureTitleElements.length >= 3) {
+                signatureTitleElements[2].textContent = rutValue;
+            }
+        }
+        
+        function resetValues() {
+            companyNameInput.value = "HERRAMIENTAS, REPUESTOS, SERVICIOS MINEROS HRM LTDA";
+            companyRutInput.value = "76.058.491-6";
+            vehiclePlateSelect.value = "";
+            vehicleModelInput.value = "";
+            mileageInput.value = "";
+            torqueNumberInput.value = "";
+            torqueValueInput.value = "850 Nm";
+            torqueReviewInput.value = "REVISIÓN PREVENTIVO TORQUE RUEDAS";
+            clientNameInput.value = "TRANSPORTES HEREME";
+            performedBySelect.value = "";
+            maintenanceChiefInput.value = "JUAN SEPULVEDA C";
+            
+            const today = new Date();
+            dateInput.value = formatDate(today);
+            
+            updateCertificate();
+        }
+        
+        function printCertificate() {
+            window.print();
+        }
+        
+        // ============================================
+        // INICIALIZACIÓN DE LA APLICACIÓN
+        // ============================================
+        
+        async function initApp() {
+            try {
+                loader.classList.add('active');
+                
+                // Inicializar Supabase Client
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                // Configurar headers globales para fetch
+                console.log('Configurando conexión con Supabase...');
+                
+                // Inicializar componentes básicos
+                initDatePicker();
+                
+                // Cargar datos
+                await Promise.allSettled([
+                    loadMaquinas(),
+                    loadPersonal()
+                ]);
+                
+                // Configurar listeners
+                setupVehicleModelListener();
+                
+                // Configurar eventos del formulario
+                const inputs = document.querySelectorAll('.form-section input, .form-section select');
+                inputs.forEach(input => {
+                    if (input.id !== 'date') {
+                        input.addEventListener('input', updateCertificate);
+                        input.addEventListener('change', updateCertificate);
+                    }
+                });
+                
+                updateBtn.addEventListener('click', updateCertificate);
+                printBtn.addEventListener('click', printCertificate);
+                resetBtn.addEventListener('click', resetValues);
+                
+                // Cargar logo
+                loadLogo();
+                
+                // Mostrar contenido
+                content.style.display = 'flex';
+                loader.classList.remove('active');
+                
+                console.log('Aplicación inicializada');
+                console.log('Vehículos cargados:', maquinasData.length);
+                console.log('Personal cargado:', personalData.length);
+                
+            } catch (error) {
+                console.error('Error en inicialización:', error);
+                showError(`Error de inicialización: ${error.message}`);
+                
+                // Inicializar componentes básicos incluso con error
+                initDatePicker();
+                setupVehicleModelListener();
+                content.style.display = 'flex';
+                loader.classList.remove('active');
+                
+                // Usar datos de ejemplo si no hay conexión
+                if (maquinasData.length === 0) {
+                    vehiclePlateSelect.innerHTML = '<option value="">No hay conexión a la base de datos</option>';
+                }
+                if (personalData.length === 0) {
+                    performedBySelect.innerHTML = '<option value="">No hay conexión a la base de datos</option>';
+                }
+            }
+        }
+        
+        function loadLogo() {
+            const logoImg = document.querySelector('.logo-img');
+            if (logoImg) {
+                logoImg.onerror = function() {
+                    this.style.display = 'none';
+                };
+                
+                logoImg.onload = function() {
+                    this.style.display = 'block';
+                };
+            }
+        }
+        
+        // Iniciar aplicación
+        document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Función para diagnosticar conexión
+        async function diagnoseConnection() {
+            try {
+                console.log('Diagnóstico de conexión:');
+                
+                // Probar conexión básica
+                const testResponse = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                
+                console.log('Test response status:', testResponse.status);
+                
+                if (testResponse.ok) {
+                    console.log('✅ Conexión básica OK');
+                } else {
+                    console.log('❌ Error en conexión básica:', testResponse.status);
+                }
+                
+            } catch (error) {
+                console.error('Error en diagnóstico:', error);
+            }
+        }
+        
+        // Ejecutar diagnóstico al cargar (opcional)
+        setTimeout(diagnoseConnection, 1000);
+    </script>
+</body>
+</html>

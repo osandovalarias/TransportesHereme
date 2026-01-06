@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualizar y Eliminar OT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #3f72af;
+      --color-secondary: #dbe2ef;
+      --color-text: #112d4e;
+      --color-accent: #2c5282;
+      --color-success: #2ecc71;
+      --color-error: #e74c3c;
+      --color-warning: #f39c12;
+      --border-radius: 8px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--color-text);
+    }
+
+    .container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 800px;
+      width: 100%;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--color-primary);
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: var(--border-radius);
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .btn-success {
+      background: var(--color-success);
+    }
+
+    .btn-success:hover {
+      background: #27ae60;
+    }
+
+    .btn-danger {
+      background: var(--color-error);
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-info {
+      background: var(--color-primary);
+    }
+
+    .btn-info:hover {
+      background: var(--color-accent);
+    }
+
+    .btn-warning {
+      background: var(--color-warning);
+    }
+
+    .btn-warning:hover {
+      background: #e67e22;
+    }
+
+    .btn-sm {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+    }
+
+    .center {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .status-message {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: var(--border-radius);
+      text-align: center;
+      display: none;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: var(--color-error);
+      border-left: 4px solid var(--color-error);
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: var(--color-success);
+      border-left: 4px solid var(--color-success);
+    }
+
+    /* Formulario de búsqueda */
+    .search-form {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+
+    /* Detalles de la OT */
+    .ot-details {
+      display: none;
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: var(--box-shadow);
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .detail-section:last-child {
+      border-bottom: none;
+    }
+
+    .detail-section-title {
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .detail-item {
+      flex: 1;
+      min-width: 200px;
+      margin-bottom: 10px;
+      padding-right: 15px;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      padding: 8px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      min-height: 38px;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    /* Modal de confirmación */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    /* Botón Volver */
+    .btn-volver {
+      background: #6c757d;
+      margin-bottom: 20px;
+    }
+
+    .btn-volver:hover {
+      background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .detail-item {
+        flex: 100%;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+      
+      .modal-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Botón Volver -->
+    <button class="btn btn-volver" onclick="window.location.href='mantenimientos.html'">
+      <i class="fas fa-arrow-left"></i> Volver al Listado
+    </button>
+
+    <div class="center">
+      <h2>Visualizar y Eliminar OT</h2>
+    </div>
+
+    <div id="error-message" class="status-message error" style="display: none;"></div>
+    <div id="success-message" class="status-message success" style="display: none;"></div>
+
+    <!-- Formulario de búsqueda -->
+    <div class="search-form">
+      <div class="form-group">
+        <label for="ot-id">Número de OT:</label>
+        <input type="number" id="ot-id" placeholder="Ingrese el número de OT">
+      </div>
+      <div class="center">
+        <button class="btn btn-primary" onclick="buscarOT()">
+          <i class="fas fa-search"></i> Buscar OT
+        </button>
+      </div>
+    </div>
+
+    <!-- Detalles de la OT -->
+    <div id="ot-details" class="ot-details">
+      <div class="detail-section">
+        <div class="detail-section-title">
+          <i class="fas fa-info-circle"></i> Información General
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <div class="detail-label">Número de OT</div>
+            <div id="ot-numero" class="detail-value"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Patente</div>
+            <div id="ot-patente" class="detail-value"></div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <div class="detail-label">Fecha</div>
+            <div id="ot-fecha" class="detail-value"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Hora</div>
+            <div id="ot-hora" class="detail-value"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">
+          <i class="fas fa-tools"></i> Detalles del Mantenimiento
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <div class="detail-label">Tipo</div>
+            <div id="ot-tipo" class="detail-value"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Kilometraje</div>
+            <div id="ot-kilometraje" class="detail-value"></div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <div class="detail-label">Estado</div>
+            <div id="ot-realizado" class="detail-value"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Responsable</div>
+            <div id="ot-responsable" class="detail-value"></div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item" style="flex: 100%;">
+            <div class="detail-label">Descripción</div>
+            <div id="ot-descripcion" class="detail-value" style="min-height: 80px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">
+          <i class="fas fa-box-open"></i> Insumos Utilizados
+        </div>
+        <div id="ot-insumos" class="detail-value" style="min-height: 100px;"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">
+          <i class="fas fa-users"></i> Personal Involucrado
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <div class="detail-label">Elaborado por</div>
+            <div id="ot-hecho-por" class="detail-value"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Autorizado por</div>
+            <div id="ot-autorizado-por" class="detail-value"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-danger" onclick="confirmarEliminacion()">
+          <i class="fas fa-trash"></i> Eliminar OT
+        </button>
+        <button class="btn btn-info" onclick="imprimirOT()">
+          <i class="fas fa-print"></i> Imprimir
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div id="confirmModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <h3>Confirmar Eliminación</h3>
+        <p>¿Está seguro de que desea eliminar la OT <span id="modal-ot-numero"></span>?</p>
+        <p>Esta acción no se puede deshacer.</p>
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+          <button class="btn btn-danger" onclick="eliminarOT()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://cswjdvjlfztewtmkrxsh.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzd2pkdmpsZnp0ZXd0bWtyeHNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2NDg0ODEsImV4cCI6MjA2NzIyNDQ4MX0.z0C2PtfkvYwIYfFjnFmdRicn_Jfqyq_SbCHKycHBX-4';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let otActual = null;
+
+    // Mostrar mensaje de error
+    function mostrarError(mensaje) {
+      const errorElement = document.getElementById('error-message');
+      errorElement.textContent = mensaje;
+      errorElement.style.display = 'block';
+      
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+      }, 5000);
+    }
+
+    // Mostrar mensaje de éxito
+    function mostrarExito(mensaje) {
+      const successElement = document.getElementById('success-message');
+      successElement.textContent = mensaje;
+      successElement.style.display = 'block';
+      
+      setTimeout(() => {
+        successElement.style.display = 'none';
+      }, 3000);
+    }
+
+    // Buscar OT en la base de datos
+    async function buscarOT() {
+      const otId = document.getElementById('ot-id').value.trim();
+      
+      if (!otId) {
+        mostrarError('Por favor, ingrese un número de OT');
+        return;
+      }
+      
+      const { data, error } = await supabase
+        .from('mantenimientos')
+        .select('*')
+        .eq('id', otId)
+        .single();
+
+      if (error) {
+        mostrarError('No se encontró la OT especificada');
+        document.getElementById('ot-details').style.display = 'none';
+        return;
+      }
+      
+      otActual = data;
+      mostrarDetallesOT(data);
+    }
+
+    // Mostrar los detalles de la OT
+    function mostrarDetallesOT(ot) {
+      // Información general
+      document.getElementById('ot-numero').textContent = ot.id;
+      document.getElementById('ot-patente').textContent = ot.patente;
+      document.getElementById('ot-fecha').textContent = ot.fecha;
+      document.getElementById('ot-hora').textContent = ot.hora || 'No especificada';
+      
+      // Detalles del mantenimiento
+      document.getElementById('ot-tipo').textContent = ot.tipo || 'No especificado';
+      document.getElementById('ot-kilometraje').textContent = ot.kilometraje || 'No especificado';
+      document.getElementById('ot-realizado').textContent = ot.realizado ? 'Realizado' : 'No Realizado';
+      document.getElementById('ot-responsable').textContent = ot.responsable || 'No especificado';
+      document.getElementById('ot-descripcion').textContent = ot.descripcion || 'No hay descripción';
+      
+      // Insumos
+      const insumosContainer = document.getElementById('ot-insumos');
+      if (ot.insumos && ot.insumos.length > 0) {
+        let insumosHTML = '';
+        ot.insumos.forEach(insumo => {
+          insumosHTML += `<div>${insumo.descripcion} - Cantidad: ${insumo.cantidad}</div>`;
+        });
+        insumosContainer.innerHTML = insumosHTML;
+      } else {
+        insumosContainer.textContent = 'No se registraron insumos';
+      }
+      
+      // Personal
+      document.getElementById('ot-hecho-por').textContent = ot.hecho_por || 'No especificado';
+      document.getElementById('ot-autorizado-por').textContent = ot.autorizado_por || 'No especificado';
+      
+      // Mostrar la sección de detalles
+      document.getElementById('ot-details').style.display = 'block';
+    }
+
+    // Confirmar eliminación de OT
+    function confirmarEliminacion() {
+      if (!otActual) return;
+      
+      document.getElementById('modal-ot-numero').textContent = otActual.id;
+      document.getElementById('confirmModal').style.display = 'block';
+    }
+
+    // Eliminar OT de la base de datos
+    async function eliminarOT() {
+      if (!otActual) return;
+      
+      const { error } = await supabase
+        .from('mantenimientos')
+        .delete()
+        .eq('id', otActual.id);
+
+      if (error) {
+        mostrarError('Error al eliminar la OT: ' + error.message);
+        cerrarModal();
+        return;
+      }
+      
+      mostrarExito('OT eliminada correctamente');
+      cerrarModal();
+      document.getElementById('ot-details').style.display = 'none';
+      document.getElementById('ot-id').value = '';
+      otActual = null;
+    }
+
+    // Imprimir OT (similar a la función del listado)
+    function imprimirOT() {
+      if (!otActual) return;
+      
+      // Abrir ventana de impresión
+      const ventanaImpresion = window.open('', '_blank');
+      ventanaImpresion.document.write(`
+        <html>
+          <head>
+            <title>OT #${otActual.id}</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              .print-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+              .print-title { text-align: center; font-size: 18px; font-weight: bold; }
+              .print-section { margin-bottom: 15px; }
+              .print-section-title { font-weight: bold; background-color: #f0f0f0; padding: 5px; border-left: 4px solid #3f72af; }
+              .print-row { display: flex; margin-bottom: 10px; }
+              .print-col { flex: 1; padding: 5px; }
+              .print-label { font-weight: bold; }
+              table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+              th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+              th { background-color: #f0f0f0; }
+              @media print { body { padding: 0; } }
+            </style>
+          </head>
+          <body>
+            <div class="print-header">
+              <div class="print-title">ORDEN DE TRABAJO #${otActual.id}</div>
+            </div>
+
+            <div class="print-section">
+              <div class="print-section-title">INFORMACIÓN GENERAL</div>
+              <div class="print-row">
+                <div class="print-col">
+                  <span class="print-label">Patente:</span> ${otActual.patente}
+                </div>
+                <div class="print-col">
+                  <span class="print-label">Fecha:</span> ${otActual.fecha}
+                </div>
+              </div>
+              <div class="print-row">
+                <div class="print-col">
+                  <span class="print-label">Hora:</span> ${otActual.hora || 'No especificada'}
+                </div>
+                <div class="print-col">
+                  <span class="print-label">Tipo:</span> ${otActual.tipo || 'No especificado'}
+                </div>
+              </div>
+            </div>
+
+            <div class="print-section">
+              <div class="print-section-title">DETALLES DEL MANTENIMIENTO</div>
+              <div class="print-row">
+                <div class="print-col">
+                  <span class="print-label">Kilometraje:</span> ${otActual.kilometraje || 'No especificado'}
+                </div>
+                <div class="print-col">
+                  <span class="print-label">Estado:</span> ${otActual.realizado ? 'Realizado' : 'No Realizado'}
+                </div>
+              </div>
+              <div class="print-row">
+                <div class="print-col">
+                  <span class="print-label">Responsable:</span> ${otActual.responsable || 'No especificado'}
+                </div>
+              </div>
+              <div class="print-row">
+                <div class="print-col">
+                  <span class="print-label">Descripción:</span><br>
+                  ${otActual.descripcion || 'No hay descripción'}
+                </div>
+              </div>
+            </div>
+
+            <div class="print-section">
+              <div class="print-section-title">INSUMOS UTILIZADOS</div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+      `);
+      
+      // Agregar insumos si existen
+      if (otActual.insumos && otActual.insumos.length > 0) {
+        otActual.insumos.forEach(insumo => {
+          ventanaImpresion.document.write(`
+            <tr>
+              <td>${insumo.descripcion}</td>
+              <td>${insumo.cantidad}</td>
+            </tr>
+          `);
+        });
+      } else {
+        ventanaImpresion.document.write(`
+          <tr>
+            <td colspan="2">No se registraron insumos</td>
+          </tr>
+        `);
+      }
+      
+      ventanaImpresion.document.write(`
+                </tbody>
+              </table>
+            </div>
+
+            <div class="print-section">
+              <div class="print-section-title">PERSONAL INVOLUCRADO</div>
+              <div class="print-row">
+                <div class="print-col">
+                  <span class="print-label">Elaborado por:</span> ${otActual.hecho_por || 'No especificado'}
+                </div>
+                <div class="print-col">
+                  <span class="print-label">Autorizado por:</span> ${otActual.autorizado_por || 'No especificado'}
+                </div>
+              </div>
+            </div>
+          </body>
+        </html>
+      `);
+      
+      ventanaImpresion.document.close();
+      setTimeout(() => {
+        ventanaImpresion.print();
+      }, 250);
+    }
+
+    // Cerrar modal
+    function cerrarModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    // Cerrar modal al hacer clic fuera del contenido
+    window.onclick = function(event) {
+      const modal = document.getElementById('confirmModal');
+      if (event.target == modal) {
+        cerrarModal();
+      }
+    }
+
+    // Permitir buscar con la tecla Enter
+    document.getElementById('ot-id').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        buscarOT();
+      }
+    });
+  </script>
+</body>
+</html>
